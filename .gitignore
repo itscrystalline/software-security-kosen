@@ -55,3 +55,8 @@ crash-*
 
 # Student submission uploads — never belongs in a public repo (PDPA)
 labs/live-quiz/uploads/
+
+# direnv / nix dev shell state
+.direnv/
+
+*.docx

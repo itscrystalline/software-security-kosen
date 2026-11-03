@@ -1,5 +1,64 @@
 # Working rules for this repo
 
+## Required tools
+
+A computer with Docker/Compose, Git/GitHub and a browser. Python/C tools and Burp
+Community or ZAP as required. Course slides, worksheets, sandbox targets, and
+OWASP/CWE/secure-delivery references.
+
+Everything that is not a GUI or a daemon comes from the repo's Nix flake — see
+[Dev environment](#dev-environment-flake--direnv).
+
+## Weekly plan
+
+01. Security Mindset and Threat Modeling
+02. Secure SDLC, Security Tooling and Fuzzing
+03. Cryptography Used Correctly
+04. Injection and Input Handling
+05. XSS and Client-Side Security
+06. Authentication, Sessions and Access Control
+07. Review and Midterm Preparation
+08. Midterm Written Examination
+09. Midterm Practical Examination
+10. API Security
+11. Memory Safety and Exploitation
+12. Software Supply-Chain Security
+13. Cloud and Container Security
+14. AI, LLM and Agentic Application Security
+15. DevSecOps and Vulnerability Management
+16. Capstone Studio and CTF Warm-up
+17. Review and Final Preparation
+18. Final Written Examination
+19. Final Capstone CTF and Project Assessment
+20. Examination Feedback and Course Reflection
+
+## Dev environment: flake + direnv
+
+`flake.nix` pins the non-container toolchain, so nothing needs a system package
+manager: Python 3.12 with the live-quiz dependencies + pytest + pwntools,
+gcc/clang/llvm/binutils/gdb/aflplusplus/checksec, rustc/cargo,
+semgrep/gitleaks/trivy/cosign/syft/grype, sqlmap/nmap/nikto/ffuf/mitmproxy,
+hashcat/john/openssl, docker client + compose, kubectl/kind, git/gh/curl/jq/yq/make,
+pandoc + LibreOffice (`soffice`) + python-docx/python-pptx/openpyxl for `.docx`,
+`.pptx` and `.xlsx` work.
+
+```bash
+direnv allow     # once per checkout; .envrc runs `use flake`
+# or, without direnv:
+nix develop
+```
+
+- `.direnv/` is git-ignored; `flake.lock` is committed. Bump it deliberately — the
+  same pinning discipline Week 12 teaches.
+- **Host-only, never in the flake:** the Docker daemon, Burp Suite Community / OWASP
+  ZAP (GUI), WireGuard (kernel + root). Labs still run through `docker compose up`.
+- Linux-only by design: Week 11 needs ptrace, `-no-pie` and `setarch -R`. On
+  macOS/Windows follow Lab 0 (`labs/week01-threat-modeling/README.md`) and run the
+  flake inside WSL2 if you want it locally.
+- Python dependencies exist twice: `labs/live-quiz/requirements.txt` is the source of
+  truth CI installs from, and `flake.nix` mirrors it in `python.withPackages`. Adding
+  a dependency means editing both; the flake alone does not change what CI runs.
+
 ## When you change lab content, three things must move together
 
 1. **`labs/weekNN-<slug>/`** — the student-facing worksheet / README / code.
