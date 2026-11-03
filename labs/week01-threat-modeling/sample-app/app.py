@@ -4,12 +4,15 @@ You will NOT exploit this in Week 1 — you will draw a data-flow diagram
 and apply STRIDE to its components (web client, app, SQLite DB, /upload).
 """
 from flask import Flask, request, jsonify, send_from_directory
-import sqlite3, os
+from werkzeug.utils import secure_filename
+import sqlite3, os, uuid
 
 app = Flask(__name__)
+app.config["MAX_CONTENT_LENGTH"] = 2 * 1024 * 1024
 DB = "notes.db"
-UPLOAD_DIR = "uploads"
+UPLOAD_DIR = os.path.realpath("uploads")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
+ALLOWED_EXTENSIONS = {".txt", ".md", ".png", ".jpg", ".jpeg", ".pdf"}
 
 def init_db():
     con = sqlite3.connect(DB)
@@ -30,9 +33,24 @@ def notes():
 
 @app.route("/upload", methods=["POST"])
 def upload():
-    f = request.files["file"]
-    f.save(os.path.join(UPLOAD_DIR, f.filename))
-    return {"saved": f.filename}
+    f = request.files.get("file")
+    if f is None or not f.filename:
+        return {"error": "file field required"}, 400
+    client_name = f.filename
+    name = secure_filename(client_name)
+    # The client's string is metadata, never a path: a name that is not already one
+    # plain component is refused, not repaired into something else.
+    if not name or name != client_name:
+        return {"error": "filename must be a plain file name"}, 400
+    ext = os.path.splitext(name)[1].lower()
+    if ext not in ALLOWED_EXTENSIONS:
+        return {"error": "extension not allowed"}, 400
+    stored = uuid.uuid4().hex + ext          # server-generated path component
+    dest = os.path.realpath(os.path.join(UPLOAD_DIR, stored))
+    if os.path.dirname(dest) != UPLOAD_DIR:  # containment check
+        return {"error": "invalid path"}, 400
+    f.save(dest)
+    return {"saved": stored}
 
 @app.route("/files/<name>")
 def files(name):
