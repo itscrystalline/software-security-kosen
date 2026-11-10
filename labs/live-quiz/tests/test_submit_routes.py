@@ -168,3 +168,88 @@ def test_a_fresh_colliding_code_does_not_silently_authenticate_into_the_workspac
         "SELECT 1 FROM submissions WHERE assignment_id = ? AND student_id = '65310001'",
         (wid,)).fetchone()
     assert still_untouched is None, "no submission should have been created for the ambiguous code"
+
+
+def test_a_late_rule_is_announced_to_the_student_and_costed_in_the_export(
+        client, appmod, teacher, monkeypatch):
+    # KOSEN: −10% per started day late, down to 0. The student must see the rule and what it
+    # cost them; the teacher's CSV must carry the raw mark and the penalised one side by side.
+    import content as C
+    import submission as S
+    monkeypatch.setattr(C, "COURSES", [dict(C.COURSES[0], slug="kosen", late_pct_per_day=10)])
+    conn = appmod.get_db()
+    tid = conn.execute("SELECT id FROM teachers WHERE username='teach1'").fetchone()["id"]
+    wid = S.create_assignment(conn, teacher_id=tid, title="W4", now="2026-08-15T08:00:00",
+                              due_at="2026-08-20T16:59:00", late_days=10)   # 23:59 ICT
+    code = S.issue_codes(conn, wid, ["65310001"], "2026-08-15T08:00:00")["65310001"]
+    appmod.app.config["NOW"] = lambda: "2026-08-22T09:00:00"         # 2 started days late
+
+    student = appmod.app.test_client()
+    html = student.get("/submit").get_data(as_text=True)
+    r = student.post("/submit", data={"csrf_token": _csrf(html), "code": code})
+    assert r.status_code in (302, 303), "a code still opens while late work is taken"
+    page = student.get("/submit/work").get_data(as_text=True)
+    assert "loses 10% of its mark for each" in page
+    assert "2026-08-30 23:59 ICT" in page, "the student is told when late uploads stop"
+    assert "each started day late costs 10% of the mark" in page
+
+    import io
+    r = student.post("/submit/work", data={"csrf_token": _csrf(page),
+                                           "file": (io.BytesIO(b"%PDF-1.4"), "w4.pdf")},
+                     content_type="multipart/form-data")
+    assert "late 2 days, −20%" in r.get_data(as_text=True)
+
+    sub = conn.execute("SELECT id FROM submissions WHERE assignment_id = ?", (wid,)).fetchone()
+    for row in S.rubric_of(S.get_assignment(conn, wid)):
+        S.grade(conn, sub["id"], row["criterion"], row["max"], "", "2026-08-23T08:00:00")
+    import csv
+    rows = list(csv.DictReader(io.StringIO(
+        teacher.get(f"/work/{wid}/results.csv").get_data(as_text=True))))
+    assert rows[0]["percent"] == "100.00"
+    assert rows[0]["days_late"] == "2" and rows[0]["late_penalty_pct"] == "20"
+    assert rows[0]["adjusted_percent"] == "80.00"
+
+
+def _redeem_from_fresh_browser(appmod, code):
+    c = appmod.app.test_client()  # no cookies, no session
+    html = c.get("/submit").get_data(as_text=True)
+    return c.post("/submit", data={"csrf_token": _csrf(html), "code": code},
+                  follow_redirects=False)
+
+
+def test_a_course_that_allows_reuse_lets_the_same_code_back_into_the_workspace(
+        appmod, published, monkeypatch):
+    # Owner decision 2026-11-04 (KOSEN): a student who lost their session must be
+    # able to get back in with the code they were emailed. For a course named in
+    # REUSABLE_SUBMIT_COURSES, a second redemption from a fresh browser reaches
+    # the SAME workspace instead of "already used".
+    import content as C
+    monkeypatch.setenv("REUSABLE_SUBMIT_COURSES", C.COURSES[0]["slug"])
+    wid, codes = published
+    code = codes["65310001"]
+
+    r1 = _redeem_from_fresh_browser(appmod, code)
+    assert r1.status_code in (302, 303) and "/submit/work" in r1.headers["Location"]
+    r2 = _redeem_from_fresh_browser(appmod, code)
+    assert r2.status_code in (302, 303), r2.get_data(as_text=True)
+    assert "/submit/work" in r2.headers["Location"]
+
+    conn = appmod.get_db()
+    n = conn.execute("SELECT COUNT(*) FROM submissions WHERE assignment_id = ?",
+                     (wid,)).fetchone()[0]
+    assert n == 1, "reuse must return the student's one submission, not open a second"
+
+
+def test_reuse_listed_for_another_course_still_refuses_a_used_code(
+        appmod, published, monkeypatch):
+    # MFU stays single-use: listing only other courses must not loosen this one.
+    from markupsafe import escape
+    import submission as S
+    monkeypatch.setenv("REUSABLE_SUBMIT_COURSES", "some-other-course")
+    wid, codes = published
+    code = codes["65310001"]
+
+    assert _redeem_from_fresh_browser(appmod, code).status_code in (302, 303)
+    r2 = _redeem_from_fresh_browser(appmod, code)
+    assert r2.status_code not in (302, 303)
+    assert str(escape(S.CODE_ALREADY_USED)) in r2.get_data(as_text=True)

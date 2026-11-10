@@ -102,7 +102,7 @@ reference; each folder holds the week's README, worksheet and runnable target.
 |---:|---|:--:|---|---|---|
 | 1 | Security mindset & threat modelling | 150 | `labs/week01-threat-modeling` | "Elevation of Privilege" STRIDE card game | 1, 6 |
 | 2 | Secure SDLC, tooling & fuzzing | 150 | `labs/week02-sdlc-tooling` | "Bug Triage Race" | 4 |
-| 3 | Cryptography used correctly (and misused) | 150 | `labs/week03-cryptography` | "Capture the Hash" speedrun | 2, 3 |
+| 3 | Cryptography used correctly (and misused) | 150 | `labs/week03-cryptography` | "Misuse Hunt" (scanner + code review) | 2, 3 |
 | 4 | Injection & input handling | 150 | `labs/week04-injection` | "SQLi Warm-up" | 2, 3 |
 | 5 | XSS & client-side risks | 150 | `labs/week05-xss-client-side` | "XSS Golf" | 2, 3 |
 | 6 | Authentication, sessions & access control | 150 | `labs/week06-authn-authz` | "IDOR Treasure Hunt + JWT Forgery" | 2, 3 |

@@ -9,7 +9,8 @@
     <div class="lx-panel">
       <h1>Assignment</h1>
       <p class="lx-lead">{{ total }} points{% if a.due_at %} · due {{ a.due_at|due_ict }}{% else %} · no deadline{% endif %}
-        {%- if a.due_at and late_days %} · late uploads until {{ closes|due_ict }} ({{ late_days }} days){% endif %}
+        {%- if a.due_at and late_days %} · late uploads until {{ closes|due_ict }} ({{ late_days }} days
+          {%- if late_pct %}, −{{ late_pct }}%/day{% endif %}){% endif %}
         {%- if a.week_slug %} · <a class="lx-link" href="/learn/{{ a.week_slug }}">worksheet</a>{% endif %}</p>
       <form method="post" action="/work/{{ a.id }}/release"> <!-- nosemgrep: python.django.security.django-no-csrf-token.django-no-csrf-token -->
         <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
@@ -22,8 +23,11 @@
       <p class="lx-lead">One per student per worksheet. A code opens the worksheet once, in
         one browser (the student returns to it there until the deadline). If they lose that
         browser, run Issue codes again with <b>only their ID</b> for a new code. After the
-        deadline a code opens only released marks on handed-in work; any other code is
-        refused and stays unused, so it works again if you reopen the worksheet.
+        deadline a code opens only released marks on handed-in work{% if late_days %}, or,
+        until late uploads close, {% if late_pct %}lets a student who did not hand in on time
+        hand in late (on-time work is final at the deadline){% else %}lets a student hand in or
+        replace their work, which then counts as late{% endif %}{% endif %}; any other code is refused and
+        stays unused, so it works again if you reopen the worksheet.
         <b>A code is that student's identity</b> — hand them out individually.</p>
       <form method="post" action="/work/{{ a.id }}/codes"> <!-- nosemgrep: python.django.security.django-no-csrf-token.django-no-csrf-token -->
         <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
@@ -46,12 +50,14 @@
             <tr>
               <td>{{ r.student_id }}</td>
               <td>{% if not r.submitted %}not handed in
-                  {%- elif r.late %}<span class="lx-badge lx-badge--warn">late {{ r.days_late }}d</span>
+                  {%- elif r.late %}<span class="lx-badge lx-badge--warn">late {{ r.days_late }}d
+                    {%- if r.penalty_pct %} −{{ r.penalty_pct }}%{% endif %}</span>
                   {%- elif not r.fully_graded %}to mark
                   {%- else %}marked{% endif %}</td>
               <td>{{ r.files }}</td>
               <td>{% if r.earned is not none %}{{ '%.0f'|format(r.earned) }} / {{ '%.0f'|format(r.possible) }}
                   {%- if not r.fully_graded %} <span class="lx-toc-n">partial</span>{% endif %}
+                  {%- if r.late and r.adjusted_percent is not none %} <span class="lx-toc-n">→ {{ '%.0f'|format(r.adjusted_percent) }}% after late penalty</span>{% endif %}
                   {%- else %}—{% endif %}</td>
               <td>{% if r.submitted %}<a class="lx-link" href="/work/{{ a.id }}/mark/{{ r.submission_id }}">mark ▸</a>{% endif %}</td>
             </tr>
@@ -59,8 +65,12 @@
           </tbody>
         </table>
       </div>
-      <p class="lx-caption">A student who never handed in shows “—”, not 0. Late is shown, not
-        deducted — the −10%/day in SUBMISSION.md is yours to apply once, deliberately.</p>
+      <p class="lx-caption">A student who never handed in shows “—”, not 0.
+        {%- if late_pct %} This course's late rule (−{{ late_pct }}% per started day, down to 0) is
+        worked out for you: results.csv keeps the raw <code>percent</code> and adds
+        <code>adjusted_percent</code> after the penalty.
+        {%- else %} Late is shown, not deducted — this course's late rule is yours to apply once,
+        deliberately.{% endif %}</p>
     </div>
   </div>
 </div>

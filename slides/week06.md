@@ -242,7 +242,7 @@ GET /uploads/backdoor.php?cmd=ls%20-l                200   ← RCE
 2. Forge a weak JWT two ways: `alg:none`, then crack the hardcoded HMAC secret
 3. **Defend:** switch to `solution_app.py` (already fixed), prove it blocks all three attacks (403 + two 401s), cite the exact fix line for each
 
-<!-- Explain before lab. Treasure hunt = enumerate ids for per-student flags — it's horizontal privilege escalation (become another regular user), not vertical (become admin); /api/admin exists in the code but no graded task ever targets it, don't imply it does. Defend is read-and-cite against a pre-written fix, not student-authored RBAC — nothing here is role-based. ~3 min. -->
+<!-- Explain before lab. Treasure hunt = enumerate ids for per-student flags — it's horizontal privilege escalation (become another regular user), not vertical (become admin). /api/admin IS graded, just not part of this in-class game: Worksheet Task 4 (homework) forges sub=admin to read its flag, and Task 5 re-tests it for the 401. Don't tell students it's out of scope. Defend is read-and-cite against a pre-written fix, not student-authored RBAC — nothing here is role-based. ~3 min. -->
 
 ---
 

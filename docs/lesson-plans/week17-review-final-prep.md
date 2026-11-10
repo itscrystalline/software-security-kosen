@@ -4,15 +4,12 @@
 |---|---|
 | **Course** | Software Security 2 (02005094, KOSEN-KMITL) |
 | **Week / date** | 17 · ⬚ |
-| **Contact time** | 150 min, one continuous block (`AGENDA.md`, *Week 7 & 17 — Review*): review quiz 25 + Security Jeopardy: Champions 40 + mock final CTF 75 (ungraded; finished at home) + debrief 10 |
+| **Contact time** | 150 min, one continuous block (`AGENDA.md`, *Week 7 & 17 — Review*): review quiz 30 + Security Jeopardy: Champions 35 + mock final CTF 75 (ungraded; finished at home) + debrief 10 |
 | **Lab folder** | `labs/week17-review-final-prep` |
 | **Slides** | `slides/week17.md` |
 | **Type** | Review — **no new content**. Consolidates Weeks 10–16 (+ first-half callbacks) |
 | **Standards consolidated** | OWASP **API Security Top 10:2023** — API1 BOLA · API3 BOPLA (mass assignment) · API4 Unrestricted Resource Consumption · OWASP **2025** — A02 Security Misconfiguration · A03 Software Supply Chain Failures · A08 Software or Data Integrity Failures · A09 Security Logging & Alerting Failures · A10 Mishandling of Exceptional Conditions · OWASP **Top 10 for LLM Applications (2025)** — LLM01, LLM02, LLM05, LLM06, LLM08, LLM10 · CWE-121, 787, 134, 242, 416, 193, 1104, 829, 1357, 1395, 321, 732, 16, 798, 250, 538, 269, 200 |
 | **CLOs addressed** | **CLO1–CLO5** (course specification §6, week 17 row) |
-
-> **KOSEN-KMITL 02005094 runs a 150-min class (subject sheet, Oct 2026).** The timings below were
-> written for a longer block; the 150-min agenda is in [AGENDA.md](../../AGENDA.md).
 
 ---
 
@@ -59,23 +56,22 @@ Weeks 10–16 look like six separate modern-stack topics and are really the same
 | 13 | Cloud & container security | "Misconfig Hunt" (CloudGoat-style) | `*:*` IAM violates least privilege; a secret in `ENV` is recoverable from a shipped image; unpinned `:latest`; distroless + non-root shrinks attack surface | Mock-CTF **#6**; Jeopardy (*Cloud*); Quiz 2 Part A/C |
 | 14 | AI / LLM application security | "Gandalf Challenge" + tool poisoning | direct vs indirect prompt injection; a secret in the system prompt is the LLM02 anti-pattern; LLM output is untrusted → output-handling/XSS; least-privilege tools limit agency | Mock-CTF **#7**; Jeopardy (*AI/LLM*); Quiz 2 Part A/B |
 | 15 | DevSecOps: putting it together | "Break the Build" (Red vs Blue) | fail **closed**, not open; a CI gate fails the build on HIGH/CRITICAL; SAST/SCA/secret-scanning — what each catches; SARIF to the Security tab | Jeopardy (*DevSecOps*); Quiz 2 Part A/C; **Week 18 written** |
-| 16 | Capstone studio & CTF warm-up | Project WIP review + `scrimmage.md` | attack → root cause → fix, demoed live; threat model → SBOM → signed artifact → CI pipeline as one story | Project readiness check today; graded in **Week 19** |
+| 16 | Capstone studio & CTF warm-up | Project WIP review + `scrimmage.md` | attack → root cause → fix, demoed live; threat model → SBOM → signed artifact → CI pipeline as one story | Project readiness check today; graded from the report and its demo video, due **before Week 19** |
 
-**Coverage gap to name out loud.** The mock CTF's challenges are drawn from Weeks 10–14 (plus one web-half callback) only. **Weeks 15 (DevSecOps) and 16 (capstone) have no mock-CTF challenge.** DevSecOps is carried today by the Jeopardy *DevSecOps* category and Quiz 2, and it is examined in the **Week 18 written paper** — where the CI-gate question (A6, 5 pts) and the GitHub-Actions-pipeline design (D1, 10 pts) put **15 of the paper's 100 marks** on a week the mock never touches. A team that revises only from the mock CTF will walk into Week 18 — and into Week 19's #14 "Break the Build" (15 pts) — having skipped it. The capstone is not a CTF topic at all — it is the graded project demo, due Week 19.
+**Coverage gap to name out loud.** The mock CTF's challenges are drawn from Weeks 10–14 (plus one web-half callback) only. **Weeks 15 (DevSecOps) and 16 (capstone) have no mock-CTF challenge.** DevSecOps is carried today by the Jeopardy *DevSecOps* category and Quiz 2, and it is examined in the **Week 18 written paper** — where the CI-gate question (A6, 5 pts) and the GitHub-Actions-pipeline design (D1, 10 pts) put **15 of the paper's 100 marks** on a week the mock never touches. A team that revises only from the mock CTF will walk into Week 18 — and into Week 19's #14 "Break the Build" (15 pts) — having skipped it. The capstone is not a CTF topic at all — it is the graded project demo, a video due with the report before Week 19.
 
-## 5. Session run-sheet — 300 min
+## 5. Session run-sheet — 150 min
 
-Timings are AGENDA.md's review-week agenda (Weeks 7 & 17).
+Timings are AGENDA.md's review-week agenda (*Week 7 & 17 — Review (150 min)*). There is no break.
 
 | Time | Block | What happens |
 |---|---|---|
 | 0:00–0:30 | **Cumulative review quiz** | Quiz 2 (`quizzes/quiz2.md`) — 25 pts, 30 min |
-| 0:30–1:45 | **Security Jeopardy: Champions** | Team quiz-show across the modern stack + first-half callbacks |
-| 1:45–2:00 | **Break** | Teams start their mock-CTF targets during the break — **including the toolbox build** |
-| 2:00–4:30 | **Mock final CTF** | `labs/week17-review-final-prep/mock-ctf.md`, in the Week 19 team format |
-| 4:30–5:00 | **Debrief** | Common mistakes (§6) + final logistics (§7) |
+| 0:30–1:05 | **Security Jeopardy: Champions** | Team quiz-show across the modern stack + first-half callbacks |
+| 1:05–2:20 | **Mock final CTF** | `labs/week17-review-final-prep/mock-ctf.md`, in the Week 19 team format — the first 75 min in class; it is ungraded practice, so teams finish the remaining challenges at home |
+| 2:20–2:30 | **Debrief** | Common mistakes (§6) + final logistics (§7) |
 
-*(The presenter notes in `slides/week17.md` sketch a shorter shape — roughly 60–75 min of Jeopardy and ~90 min of mock CTF. AGENDA.md gives 75 min of Jeopardy and 150 min of mock CTF; `mock-ctf.md` itself says ~165 min. Follow AGENDA's 150-min block; if the mock overruns, the natural lever to drop is challenge 8, the optional web callback. This is documentation drift, in the same family as AGENDA.md's own "drift to resolve" note.)*
+*(The presenter notes in `slides/week17.md` still budget the longer review block: a 30-min quiz, ~75 min of Jeopardy, a 15-min break, ~150 min of mock CTF and a 30-min debrief. AGENDA.md now gives 30 / 35 / 75 in class / 10 with no break, and `mock-ctf.md` says ~165 min of challenges, about 75 of them in class and the rest at home. Follow AGENDA; the slide notes are documentation drift. The old plan's overrun lever — drop challenge 8, the optional web callback — no longer applies: whatever is not reached in class is finished at home.)*
 
 ### 5.1 Cumulative review quiz — 0:00–0:30
 
@@ -89,24 +85,27 @@ Timings are AGENDA.md's review-week agenda (Weeks 7 & 17).
 | Delivery | Google Form (SUBMISSION.md; Forms are built with `instructor/make_quiz_forms.gs`), individual, one attempt, shuffled, locked to the school account. `quiz2.md` prints as the paper fallback |
 | Where it counts | The 10% weekly-quizzes / participation component |
 
+**Quiz time — decided.** The quiz keeps the 30 min that `quiz2.md` states (owner, 2026-10-31); Security Jeopardy gives up 5 min to make room, so the class stays 150 min.
+
 Weeks 7 and 17 deliberately have **no** `quizzes/weekly/weekNN.md` 6-question quiz — the cumulative quiz *is* this week's retrieval practice (`quizzes/README.md`). Note that Quiz 2 covers Weeks 10–**15**; the Week 16 capstone carries no quiz content.
 
 **Cohort rotation.** `quiz2.md` is a static file reused every cohort, which is a leak risk. Swap two or three Part A MCQs and/or the Part B/C alternates from the review-quiz item bank into a cohort copy, keeping the total at 25 pts (10 × 1 + 3 × 3 + 2 × 3).
 
-### 5.2 Security Jeopardy: Champions — 0:30–1:45
+### 5.2 Security Jeopardy: Champions — 0:30–1:05
 
 - **Categories** — the six named in the lab README and `slides/week17.md`, one per modern-stack week under review:
   *API · Memory · Supply Chain · Cloud · AI/LLM · DevSecOps*, with first-half callbacks (injection, auth) folded into the squares since the final is cumulative.
 - **Board** — 6 categories (named on the slide) × 5 point values, following the same structure documented in `slides/week07.md`'s presenter note for the equivalent Week 7 round, plus a **Final Jeopardy wager** at the end (`slides/week17.md` presenter note: seed from the item bank, prepare beforehand). Prepare it before the session; nothing ships in the repo.
+- **Fit** — the `slides/week17.md` presenter note budgets the round at ~75 min; AGENDA gives the block 35 min and no breakdown. Whether the full board and the wager fit in 35 min, and what gives if they do not, is ⬚ — no source says.
 - **Seed** — draw the questions from the final item bank (`instructor/exams/item-bank.md`), per the `slides/week17.md` note.
 - **Teams** — run by Houses (non-graded engagement layer, per course specification §7).
 - **Rules** — the team picks a square and answers; keep it fast.
 - **Points** — award them into the CTFd / Houses board if the scoreboard is running; the Awards mechanism for non-flag games is documented in `instructor/CTFd-SETUP.md` §6.
 - **Purpose** — this is the retrieval-practice slot for **DevSecOps (Week 15)**, which the mock CTF does not reach, and for the first-half callbacks. Weight the board towards those rather than filling it with API questions the mock already drills.
 
-### 5.3 Mock final CTF — 2:00–4:30
+### 5.3 Mock final CTF — 1:05–2:20
 
-**How it is run.** `labs/week17-review-final-prep/mock-ctf.md`: ~165 min (the file's figure; the AGENDA block is 150 min — see §5's drift note), **teams**, sandbox targets only, **hints included**, **ungraded (participation)**, no real exam flags. Same format as the Week 19 final CTF. For each challenge the team records their payload/command plus a one-line fix, then self-checks against the linked solution file. Warm-up (concepts): for any two challenges give the OWASP 2025 / API / LLM id + CWE, and one sentence on which control would have prevented it in CI.
+**How it is run.** `labs/week17-review-final-prep/mock-ctf.md`: ~165 min of challenges — about 75 min in class, and teams finish the rest at home (it is ungraded practice). **Teams**, sandbox targets only, **hints included**, **ungraded (participation)**, no real exam flags. Same format as the Week 19 final CTF. For each challenge the team records their payload/command plus a one-line fix, then self-checks against the linked solution file. Warm-up (concepts): for any two challenges give the OWASP 2025 / API / LLM id + CWE, and one sentence on which control would have prevented it in CI. Which challenges run in the 75 in-class minutes and which go home is ⬚ — neither AGENDA nor `mock-ctf.md` assigns them.
 
 | # | Challenge | Topic | Hint given in the file | Self-check against |
 |---|---|---|---|---|
@@ -134,11 +133,11 @@ No per-student flags are involved in the mock: the Week 10 and Week 14 targets f
 
 **How scoring works.** The mock CTF is **ungraded** — `mock-ctf.md` marks it participation, with no flags and no point values, and the team's feedback loop is the self-check column above. The repo defines no scoring scheme for it: any points beyond participation are ⬚ (instructor's choice). If the CTFd scoreboard is running, the documented way to put the session on the same leaderboard as the weekly games is CTFd **Awards** (`instructor/CTFd-SETUP.md` §6: 1st/2nd/3rd = 300/200/100, first-blood +100, most creative +50). Do not describe CTFd's dynamic scoring or point-costing hints as the mock's scoring model — those apply to the flag-bearing challenge set, not to this session.
 
-**Formative checkpoints.** Challenges 1 and 2 are pure `curl` against the Week 10 API and are the two shortest paths — every team should have landed both by 3:00; a team still stuck is usually re-typing the request rather than reading the ownership check missing in `vulnerable_api.py`. The binary work (challenges 3 and 4) is the long pole: it needs the toolbox image built and the offset *derived* (not the hint's 72 assumed) — start it first, not last. A team that has solved everything early should attempt the **indirect-injection / output-XSS** work (Week 14 worksheet Tasks 2–3), because Week 19 has such a challenge and the mock does not (§7.3).
+**Formative checkpoints.** Challenges 1 and 2 are pure `curl` against the Week 10 API and are the two shortest paths — every team should have landed both by 2:05, an hour into the mock as in the longer block (that hour assumed the targets were already up when the block started; when they come up now is ⬚, §10). A team still stuck is usually re-typing the request rather than reading the ownership check missing in `vulnerable_api.py`. The binary work (challenges 3 and 4) is the long pole: it needs the toolbox image built and the offset *derived* (not the hint's 72 assumed) — start it first, not last. A team that has solved everything — in class or at home — should attempt the **indirect-injection / output-XSS** work (Week 14 worksheet Tasks 2–3), because Week 19 has such a challenge and the mock does not (§7.3).
 
-### 5.4 Debrief — 4:30–5:00
+### 5.4 Debrief — 2:20–2:30
 
-Run §6's misconception list against the room ("hands up who is shaky on this one") and drill the two or three that draw the most hands, then give the Week 18/19 logistics from §7. Close by confirming every team has a term project that runs and every mock-CTF target came up on their own machine.
+Run §6's misconception list against the room ("hands up who is shaky on this one") and drill the two or three that draw the most hands, then give the Week 18/19 logistics from §7. Close by confirming every team has a term project that runs and every mock-CTF target came up on their own machine. AGENDA gives the debrief 10 min with no breakdown and gives the per-team readiness check (§7.5) no slot of its own; whether all of this fits, how the time splits, and where the per-team check happens are ⬚. The logistics in §7.4 must be read out either way, because `slides/week17.md` asks for them in this session.
 
 ## 6. Common misconceptions to re-test
 
@@ -180,12 +179,12 @@ Cumulative, emphasis on Weeks 10–16. Closed book unless stated otherwise. Blue
 
 **DevSecOps is the block the mock does not touch.** Section A6 (5 pts) and D1 (10 pts) both sit on Week 15, which has no mock-CTF challenge — that is up to **15 of the paper's 100 marks** on material a team drilling only from the mock never met. Cover it in the Jeopardy *DevSecOps* category and Quiz 2 Part C (Q15, "Break the Build"), and say plainly in the debrief that pipeline gate design and fail-closed logging are examinable.
 
-### 7.2 Week 19 — capstone CTF + project demos, 240 min
+### 7.2 Week 19 — capstone CTF + project demos, 150 min
 
-Team-based. From `labs/week19-final-ctf-capstone/ctf.md` and README, and AGENDA.md:
+Team-based. From `labs/week19-final-ctf-capstone/ctf.md` and README, and AGENDA.md (*Week 19 — Final CTF + project demos (150 min)*):
 
-- **Capstone CTF tournament** (0:00–2:30, 150 min): **165 pts across 14 challenges**, team-based, leaderboard, sandbox targets only. Challenges 1–8, 12 and 14 are hosted: each student spawns their **own** instance on the course's CTFd (`ctf.zcr.ai`) and the platform issues that student a per-student flag (#8 Smash stays hidden on CTFd until the sitting). Challenges 9, 10, 11 and 13 have no hosted instance and run from the local lab folders. For each challenge the submission table wants three things — the **flag** (or noted proof), the **payload or command**, and a **one-line mitigation**. Difficulty rises with points; first-blood bonus is at the instructor's discretion.
-- **Graded final project demos** (2:30–4:00, 90 min): each team presents its secured build end-to-end — threat model → vulnerabilities → remediation → SBOM + signed artifact → CI pipeline — as a recorded video walkthrough linked in the report and due with it (graded asynchronously by rubric); live Q&A only for teams the instructor flags, not a re-demo (`project/README.md`, `project/REPORT-TEMPLATE.md`, `AGENDA.md` §*Week 19*).
+- **Capstone CTF tournament** (0:00–2:30, 150 min — it fills the class): **165 pts across 14 challenges**, team-based, leaderboard, sandbox targets only. Challenges 1–8, 12 and 14 are hosted: each student spawns their **own** instance on the course's CTFd (`ctf.zcr.ai`) and the platform issues that student a per-student flag (#8 Smash stays hidden on CTFd until the sitting). Challenges 9, 10, 11 and 13 have no hosted instance and run from the local lab folders. For each challenge the submission table wants three things — the **flag** (or noted proof), the **payload or command**, and a **one-line mitigation**. Difficulty rises with points; first-blood bonus is at the instructor's discretion.
+- **Graded final project demos — no class time.** Each team's demo walks its secured build end-to-end — threat model → vulnerabilities → remediation → SBOM + signed artifact → CI pipeline — as a recorded video walkthrough (`project/README.md`, `project/REPORT-TEMPLATE.md`). AGENDA's *Demo format (decision 2026-10-24)* note: "There is no per-team live demo or Q&A slot. The demo video is linked in the report and due with it, and graded asynchronously on the project rubric; only teams the instructor flags (report ≠ repo, a similarity hit, work the team can't account for) are called for a short live Q&A, outside the CTF time." The report and video are due before Week 19; the portal shows the exact deadline (`project/README.md`).
 
 Flags in Week 19 are submitted via the CTF Form / Classroom (SUBMISSION.md). The final (W18 written + W19 CTF) is worth **25%** of the course mark (course specification §4); the term project is a separate 15%, with each member's mark scaled by peer contribution.
 
@@ -201,6 +200,7 @@ Flags in Week 19 are submitted via the CTF Form / Classroom (SUBMISSION.md). The
 | Indirect injection / output XSS | **no counterpart** (mock #7 is *direct* injection only) | #13 "Indirect Hit" (10 pts), drawn from Week 14 worksheet Tasks 2–3 |
 | DevSecOps (Week 15) | **no counterpart** | #14 "Break the Build" (15 pts): `/admin` fails open on a malformed token (Week 15 worksheet Task 1b) |
 | Targets and flags | local Docker / toolbox on the team's own machine; no flags (public placeholders) | challenges 1–8, 12 and 14 are per-student hosted instances on `ctf.zcr.ai` with per-student flags; 9, 10, 11 and 13 have no hosted instance. How a team's submission maps onto per-student flags: ⬚ |
+| Time | ~165 min of challenges — about 75 min in class, the rest at home | one 150-min sitting that fills the class (AGENDA, *Week 19*) |
 | Hints | included in the file | none |
 | Stakes | ungraded, participation | team-scored, part of the 25% final |
 
@@ -208,17 +208,18 @@ The three Week 19 areas with **no mock counterpart** — the 60-point block of f
 
 ### 7.4 Logistics to read out in the debrief
 
-`slides/week17.md`'s closing note asks for the final logistics to be stated in this session, and none of them are recorded in the repository:
+`slides/week17.md`'s closing note asks for the final logistics to be stated in this session, and most of them are not recorded in the repository:
 
 - Week 18 (written) — date / time / room: ⬚
-- Week 19 (CTF + demos) — date / time / room: ⬚
+- Week 19 (capstone CTF) — date / time / room: ⬚
+- Report + demo video link — due before Week 19, exact deadline on the portal (`project/README.md`); no live demo in class, and only flagged teams are called for a short Q&A outside the CTF time (AGENDA, *Week 19*)
 - Exam-scope decision (cumulative vs second-half-only) and whether Quiz 2 was closed book: ⬚ (announce today)
 - Week 19 access to the hosted CTFd (`ctf.zcr.ai`) — accounts, and how each student reaches their spawned instance from the room: ⬚
-- Week 19 machine readiness — teams run the CTF and demo on the machine they used today; any target (especially the toolbox binary) that did not come up in the mock must be fixed before Week 19, not on the day.
+- Week 19 machine readiness — teams run the CTF on the machine they used today; any target (especially the toolbox binary) that did not come up in the mock must be fixed before Week 19, not on the day.
 
 ### 7.5 Deliverable — a runnable term project (not a cheat sheet)
 
-Unlike the pre-midterm review, Week 17's stated prep deliverable is not a cheat sheet — `slides/week17.md` closes on *"Bring your project: threat model, SBOM, signed artifact, CI pipeline"*, and `labs/week16-capstone` / `project/README.md` define the artefacts. The Week 17 job is to leave the room with a project that **runs** and a team that knows its Week 19 roles. Confirm, per team: the project demos end-to-end, the SBOM and signed artifact exist, the CI pipeline is green, and each member can name one challenge class they own. Any grading of the demo itself is in Week 19 (⬚ here — the repo states the deliverable, not a Week 17 mark for it).
+Unlike the pre-midterm review, Week 17's stated prep deliverable is not a cheat sheet — `slides/week17.md` closes on *"Bring your project: threat model, SBOM, signed artifact, CI pipeline"*, and `labs/week16-capstone` / `project/README.md` define the artefacts. The Week 17 job is to leave the room with a project that **runs** and a team that knows its Week 19 roles. Confirm, per team: the project demos end-to-end, the SBOM and signed artifact exist, the CI pipeline is green, and each member can name one challenge class they own. The demo itself is graded asynchronously from the video linked in the report and due with it (§7.2), not today (⬚ here — the repo states the deliverable, not a Week 17 mark for it).
 
 ## 8. Assessment for this week
 
@@ -227,7 +228,7 @@ Unlike the pre-midterm review, Week 17's stated prep deliverable is not a cheat 
 | Cumulative review quiz — Quiz 2 (25 pts) | Quiz score | K1, K2 | Part of the 10% quizzes / participation component |
 | Mock CTF | Payload + one-line fix recorded per challenge | P1, P2, A1 | **Ungraded** — participation |
 | Security Jeopardy: Champions | Team points | K1 | Non-graded engagement (Houses); CTFd Awards if the scoreboard is running |
-| Project readiness check | Runnable project + named Week 19 roles | P3, P4 | ⬚ (graded in Week 19, not today) |
+| Project readiness check | Runnable project + named Week 19 roles | P3, P4 | ⬚ (the project is graded from the report and demo video due before Week 19, not today) |
 | Debrief self-assessment | Named weak areas | P4, A2 | Formative — feeds the instructor's Week 18/19 support list |
 
 There is **no worksheet** for Week 17: the lab folder holds `README.md` and `mock-ctf.md` only, and the week carries none of the 13 graded worksheets. The graded final follows in Weeks 18–19 (25% of the course mark, course specification §4).
@@ -248,13 +249,13 @@ There is **no worksheet** for Week 17: the lab folder holds `README.md` and `moc
 
 | Risk | Mitigation |
 |---|---|
-| **The toolbox build is the long pole.** The Week 11 binary target needs the `softsec-toolbox` image (`FROM silkeh/clang:19` + apt install of gdb/nmap/sqlmap). Built cold in class on a weak network, it can swallow the first 20 minutes of the mock and blocks challenges 3 **and** 4 | Build it the day before (`docker build -t softsec-toolbox labs/toolbox`); have teams start the build during the 1:45–2:00 break, not at 2:00; keep an offline copy (`docker save`/`docker load`). Teams who did Week 11 on the same machine already have the image |
+| **The toolbox build is the long pole.** The Week 11 binary target needs the `softsec-toolbox` image (`FROM silkeh/clang:19` + apt install of gdb/nmap/sqlmap). Built cold in class on a weak network, it can swallow the first 20 minutes of the mock and blocks challenges 3 **and** 4 | Build it the day before (`docker build -t softsec-toolbox labs/toolbox`); keep an offline copy (`docker save`/`docker load`). Teams who did Week 11 on the same machine already have the image. There is no break before the mock any more, so when teams start the build (if it is not cached) is ⬚ — no source says, and a build that waits for 1:05 comes out of the 75 in-class minutes |
 | **Apple-Silicon platform mismatch on the binary challenge.** The toolbox is **not** platform-pinned, so on an M-series Mac `docker build` produces an **arm64** image. The mock hint "offset 72 → overwrite RA" and `exploit_skeleton.py`'s arithmetic (`buf[64] + saved RBP = 72`, then the saved RIP is overwritten with `WIN_ADDR`, `0x401176`-style) are **x86-64**; on arm64 the offset and `objdump` addresses differ | The worksheet already forbids trusting 72 — have students **derive the offset** with the cyclic pattern and read `&win` from `objdump` on *their* build (Week 11 Task 2). If x86-64 parity with the hint is wanted, build/run the toolbox as `linux/amd64` under emulation (slower). Either way, the flag/`[+] win() reached` line is the proof, not the number 72 |
 | **`make vuln` fails on a macOS host.** `-z execstack`/`-no-pie` are GNU-ld/Linux flags; the link step fails outside the container (`Makefile` L14–16) | Build and run the binary **only inside the toolbox** with `--cap-add=SYS_PTRACE --security-opt seccomp=unconfined`; `make syntax` is the host-side parse check, not a build |
-| **Two Trivy pulls + a Cosign network call.** Challenge 5 (`sca_scan.sh`/`cosign verify`) and challenge 6 (`bash scan.sh` → `aquasec/trivy:latest`) both hit the network; `cosign verify` reaches the registry and Rekor | Pre-pull `aquasec/trivy:latest` the day before; run the scans during the break. A team offline can still do challenge 6 by code review of `Dockerfile.insecure` against `harden.md` and describe the mitigation — which is what the Week 18 partial-credit answer rewards |
+| **Two Trivy pulls + a Cosign network call.** Challenge 5 (`sca_scan.sh`/`cosign verify`) and challenge 6 (`bash scan.sh` → `aquasec/trivy:latest`) both hit the network; `cosign verify` reaches the registry and Rekor | Pre-pull `aquasec/trivy:latest` the day before. There is no break before the mock any more, so when teams run the scans is ⬚ — no source says. A team offline can still do challenge 6 by code review of `Dockerfile.insecure` against `harden.md` and describe the mitigation — which is what the Week 18 partial-credit answer rewards |
 | **Trivy won't flag the IAM policy — students think it's clean.** `trivy config` does not parse standalone IAM JSON, and only 3 of the 6 `Dockerfile.insecure` defects map to Trivy rules (`scan.sh` L18–21) | Brief this before the block: the IAM `*:*` and the manual-review defects (`COPY . .`, `chmod -R 777`, unpinned `pip install`) are found by **reading** the file against `harden.md`, not by the scanner. Frames misconception #9 |
 | **Host-port 8080 clash between W10 and the web callback.** `labs/week10-api-security` publishes `8080:5000`, and challenge 8's callback targets (`week04`/`05`/`06`) each also publish `8080:5000`. A team that leaves the API up and then `docker compose up`s a web-half target gets a bind failure | Run one 8080 target at a time (the API and the callback are independent challenges), or override the published port in the second compose file. `:8081` (secure API) and `:8082/:8083` (Week 14) do not clash |
-| **The Jeopardy board does not exist until someone makes it.** Nothing ships in the repo; without it the 75-minute middle block has no content | Build the 6 × 5 board plus the Final-Jeopardy wager beforehand from `instructor/exams/item-bank.md`. Fallback: run the "Map of the modern stack" cold-call recap from `slides/week17.md` and extend the mock-CTF block |
+| **The Jeopardy board does not exist until someone makes it.** Nothing ships in the repo; without it the 35-min Jeopardy block has no content | Build the 6 × 5 board plus the Final-Jeopardy wager beforehand from `instructor/exams/item-bank.md`. Fallback: run the "Map of the modern stack" cold-call recap from `slides/week17.md` and extend the mock-CTF block |
 | **The CTFd scoreboard may not be up.** AGENDA.md hedges it as "if running", so points from Jeopardy and the mock may have nowhere to land | Tally on the whiteboard and enter CTFd Awards afterwards (`instructor/CTFd-SETUP.md` §6: 300/200/100, first-blood +100, most creative +50). Nothing today is graded on those points |
 | **A team cannot sit the Form quiz** — Quiz 2 runs as a Google Form locked to the school account (SUBMISSION.md) | Print `quizzes/quiz2.md`; it carries name/ID/date fields and marks up to the same 25 |
 | **Quiz-item leakage between cohorts.** `quiz2.md` is a static file reused each term | Swap two or three Part A MCQs and/or the Part B/C alternates from the review-quiz item bank into a cohort copy, holding the total at 10 × 1 + 3 × 3 + 2 × 3 = 25 |
@@ -265,7 +266,9 @@ There is **no worksheet** for Week 17: the lab folder holds `README.md` and `moc
 
 - Attendance / completion: ⬚
 - Time actually taken per block (vs. plan): ⬚
+- Did Quiz 2 fit its 30 min? Did the Jeopardy board fit 35 min? ⬚
 - Where the class got stuck, and what unblocked them: ⬚
-- Mock-CTF challenges left unsolved by more than a third of the teams: ⬚
+- Mock-CTF challenges still unsolved by more than a third of the teams at the end of the in-class block: ⬚
+- How the mock's in-class / at-home split worked — how many teams finished the remaining challenges at home: ⬚
 - Misconceptions from §6 that actually surfaced in the debrief (and any new ones): ⬚
 - Anything to change before this week runs again: ⬚

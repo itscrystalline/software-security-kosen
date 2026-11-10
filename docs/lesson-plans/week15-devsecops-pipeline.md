@@ -10,12 +10,6 @@
 | **Standards** | OWASP 2025 **A09 Security Logging & Alerting Failures** · **A10 Mishandling of Exceptional Conditions** (the scanners also cover A02/A03/A07) · CWE-636 (fail open), CWE-532 (logging sensitive data), CWE-209, CWE-489, CWE-798 · CISA **"Secure by Design"** |
 | **CLOs addressed** | **CLO4** operate security tooling across the SDLC · **CLO5** evaluate & communicate (course-spec §6). The recurring *Audit the AI* / *EiPE* + *Prompt Problem* parts carry **CLO5**, and *Evidence & Integrity* carries **CLO6** (course-spec §4). |
 
-> **KOSEN-KMITL 02005094 runs a 150-min class (subject sheet, Oct 2026).** §4's lecture is now
-> pre-class material (the week's slides), shown in class only as a 15-min explanation + demo; §5
-> runs only the worksheet's *in class* tasks, and the rest are homework. The tables below keep the
-> original 120 + 180-min layout as the content reference — the class-time plan is in
-> [AGENDA.md](../../AGENDA.md) and each worksheet's Part 3.
-
 ---
 
 ## 1. Session objectives
@@ -82,25 +76,33 @@ a log line.
   exception handler chooses what happens after a failure; and — from Weeks 2, 12 and 13 — what
   SAST, SCA, IaC scanning and secret scanning each look for.
 
-## 4. Lecture — 120 min
+## 4. Pre-class material and in-class explanation — 10 min quiz + 15 min demo
+
+**Before class (students).** The concept material is pre-class: students study `slides/week15.md`
+and answer the worksheet's **Part 2** questions from it before the class starts. The slides carry
+what the 120-min lecture used to teach:
+
+| Block | Content |
+|---|---|
+| Core concept | The whole course in one pipeline: SAST (Wk2) · SCA + image scan (Wk12–13) · secret scanning (Wk2) become *automated gates* instead of one-off scans, with **Secure by Design** as the default. `security-ci.yml`: the three jobs, the least-privilege `permissions:` block, report-then-gate (`exit-code: "0"` + `if: always()` SARIF upload, then `exit-code: "1"` / `--error`), and SARIF → the GitHub **Security** tab. The managed equivalent: GitHub Advanced Security (CodeQL code scanning, secret scanning + push protection, Dependabot), and SonarQube as a quality/SAST gate alongside |
+| Deep dive + real cases | **A09** — without logs you cannot detect or respond: log authn/authz failures and anomalies, alert on suspicious patterns. The defender's toolkit: NIDS (Snort / Suricata), HIDS (OSSEC), SIEM stack (Security Onion), and TAP (lossless) vs SPAN (cheap, drops under load). The alert confusion matrix: a **false negative** is the missed attack, but unsilenced false positives cause alert fatigue — tune, don't mute. When something does happen: NIST SP 800-86 **Collection → Examination → Analysis → Reporting**, order of volatility (memory → temp files → disk → logs), Windows Event **4625 / 4624**. **Real case:** the class supplies it — this is Worksheet 15 Part 4 Q2, "a real breach worsened by missing logging/alerting or by a fail-open error path". Instructor's own worked example: ⬚ (no breach is named in `slides/week15.md` or in the lab) |
+| Defences | **Fail closed** (A10): on error, deny — never bypass the check; never expose stack traces or secrets in errors. The two halves of the target: `insecure_service.py:46–49` (`except Exception:` → returns `panel="UNLOCKED"`, silently) against `secure_service.py:69–76` (`except Exception as exc:` → logs `type(exc).__name__`, returns `403`), and `USERS[token]` against `USERS.get(token)`; then the commented INSECURE variant at `sample-service.py:105–111`. Log the event, not the secret (`reason=bad_token` — CWE-532; `type(exc).__name__` not the message — CWE-209); `debug=False` because the Werkzeug debugger is an RCE vector (CWE-489). Vulnerability management: triage by severity and track to remediation with SLAs; fix or document a justified, time-boxed exception rather than blanket-ignoring (`README-pipeline.md` §4); coordinated disclosure, bug bounties, `security.txt` |
+
+**In class**
 
 | Time | Block | Content | Method |
 |---|---|---|---|
-| 0:00–0:10 | Weekly quiz + recap | ~10-min retrieval quiz on Week 14 (AI/LLM application security — "Gandalf Challenge" + tool poisoning); today's agenda. This is the **last weekly quiz** of the term | Individual quiz, lowest 1–2 dropped |
-| 0:10–0:55 | Core concept | The whole course in one pipeline: SAST (Wk2) · SCA + image scan (Wk12–13) · secret scanning (Wk2) become *automated gates* instead of one-off scans, with **Secure by Design** as the default. Walk `security-ci.yml` on the projector: the three jobs, the least-privilege `permissions:` block, report-then-gate (`exit-code: "0"` + `if: always()` SARIF upload, then `exit-code: "1"` / `--error`), and SARIF → the GitHub **Security** tab. Close with the managed equivalent: GitHub Advanced Security (CodeQL code scanning, secret scanning + push protection, Dependabot), and SonarQube as a quality/SAST gate alongside | Lecture + live walk-through of `security-ci.yml` |
-| 0:55–1:05 | Break | | |
-| 1:05–1:35 | Deep dive + real cases | **A09** — without logs you cannot detect or respond: log authn/authz failures and anomalies, alert on suspicious patterns. The defender's toolkit: NIDS (Snort / Suricata), HIDS (OSSEC), SIEM stack (Security Onion), and TAP (lossless) vs SPAN (cheap, drops under load). The alert confusion matrix: a **false negative** is the missed attack, but unsilenced false positives cause alert fatigue — tune, don't mute. When something does happen: NIST SP 800-86 **Collection → Examination → Analysis → Reporting**, order of volatility (memory → temp files → disk → logs), Windows Event **4625 / 4624**. **Real case:** the class supplies it — this is Worksheet 15 Part 4 Q2, "a real breach worsened by missing logging/alerting or by a fail-open error path". Instructor's own worked example: ⬚ (no breach is named in `slides/week15.md` or in the lab) | Lecture + short discussion: *"which control here would have changed the outcome?"* |
-| 1:35–1:55 | Defences | **Fail closed** (A10): on error, deny — never bypass the check; never expose stack traces or secrets in errors. Diff the two halves of the target live: `insecure_service.py:46–49` (`except Exception:` → returns `panel="UNLOCKED"`, silently) against `secure_service.py:69–76` (`except Exception as exc:` → logs `type(exc).__name__`, returns `403`), and `USERS[token]` against `USERS.get(token)`; then the commented INSECURE variant at `sample-service.py:105–111`. Log the event, not the secret (`reason=bad_token` — CWE-532; `type(exc).__name__` not the message — CWE-209); `debug=False` because the Werkzeug debugger is an RCE vector (CWE-489). Close on vulnerability management: triage by severity and track to remediation with SLAs; fix or document a justified, time-boxed exception rather than blanket-ignoring (`README-pipeline.md` §4); coordinated disclosure, bug bounties, `security.txt` | Lecture with code-diff comparisons |
-| 1:55–2:00 | Brief the game | 🔴🔵 "Break the Build" (Red vs Blue) — Blue builds the gate (Semgrep + Trivy + Gitleaks, fail on HIGH/CRITICAL, security logging that fails closed); Red submits PRs sneaking a vuln or secret past it; Blue scores per catch, Red per bypass | Instruction |
+| 0:00–0:10 | Weekly quiz + today's goal | ~10-min retrieval quiz on Week 14 (AI/LLM application security — "Gandalf Challenge" + tool poisoning), answered on the Google Form; today's goal. This is the **last weekly quiz** of the term | Individual quiz, lowest 1–2 dropped |
+| 0:10–0:25 | Explanation + live demo | Diff `insecure_service.py:46–49` against `secure_service.py:69–76` live — the same exception, one path returns the panel, the other logs and returns `403`; then walk `security-ci.yml`'s report-then-gate on the projector; brief the game — 🔴🔵 "Break the Build" (Red vs Blue): Blue builds the gate (Semgrep + Trivy + Gitleaks, fail on HIGH/CRITICAL, security logging that fails closed); Red submits PRs sneaking a vuln or secret past it; Blue scores per catch, Red per bypass | Live walk-through + code-diff comparison |
 
-**Checks for understanding during lecture**
+**Checks for understanding during the demo**
 
-- After the core concept: cold-call — *"why must the gate FAIL the build, not just warn?"* (slide
-  deck's own closing cold-call; the answer is in `README-pipeline.md` §3 — a warning-only gate is
-  decorative).
-- Before the break: one-minute paper — *"why does each tool have to run twice?"*
+- After the gate walk-through: cold-call — *"why must the gate FAIL the build, not just warn?"*
+  (slide deck's own closing cold-call; the answer is in `README-pipeline.md` §3 — a warning-only
+  gate is decorative).
+- Before the lab starts: *"why does each tool have to run twice?"*
 
-## 5. Laboratory — 180 min
+## 5. Supervised lab — 110 min in class + homework
 
 This week has **three targets**, and they are not interchangeable — different files, different
 ports, different install commands.
@@ -126,7 +128,8 @@ curl -s localhost:8091/admin                                  # {"error":"forbid
 curl -s localhost:8091/admin -H 'Authorization: alice-token'  # still UNLOCKS for a real admin (anti-cheat)
 ```
 
-**(c) GitHub Actions on a repo the student owns** — for Tasks 2–4, wired in per `README-pipeline.md` §1:
+**(c) GitHub Actions on a repo the student owns** — for Task 2 in class and Tasks 3–4 at home, wired
+in per `README-pipeline.md` §1:
 
 ```bash
 mkdir -p .github/workflows
@@ -139,41 +142,54 @@ git push        # runs on push/PR to main
 Each task submits the command / PR link, the relevant output or log lines / Actions step result, a
 screenshot, and a 2–3 sentence note on the control involved, citing the A0x / CWE.
 
+Only the worksheet's *in class* tasks run here (worksheet Part 3; [AGENDA.md](../../AGENDA.md),
+*How each worksheet is split*). The instructor circulates, checks evidence and reasoning, and runs
+2–3 **viva spot-checks** — a student reproduces and explains an exploit or fix live.
+
 | Time | Task | Student does | Evidence produced |
 |---|---|---|---|
-| 0:00–0:15 | **Task 0 — Onboarding** (15 min) | Run the sample service; fire the three `:5001` curls above | Screenshot of the structured `event=…` security log lines for `authn_failure`, `authz_failure` and `authz_success` |
-| 0:15–0:50 | **Task 1 — Logging & fail-closed** (35 min, A09/A10) | Read `/admin` in `sample-service.py`; explain why the broad `except Exception` returns **403, not the secret**, and why `type(exc).__name__` (not the message) is logged (CWE-209); identify the line that would make it fail *open* — the commented INSECURE variant | The log lines + a 2–3 sentence explanation of fail-closed vs fail-open |
-| 0:50–1:15 | **Task 1b — Break the Build, live** (25 min, A10 / CWE-636) | `cd labs/week15-devsecops-pipeline && docker compose up`; as **Red**, hit the insecure admin route with **no** `Authorization` header — the fail-open path leaks the admin panel *and* the flag (the public demo flag on this local run; per-student only on a hosted instance); compare with `:8091` | The leaked `FLAG{…}`, the two contrasting `/admin` responses (`:8090` leak vs `:8091` deny), and the exact line in `insecure_service.py` that fails open |
-| 1:15–1:50 | **Task 2 — Stand up the gate** (35 min) | Push `security-ci.yml`, open the Actions run, confirm the three jobs (`semgrep`, `trivy`, `gitleaks`) execute and SARIF appears in the Security tab | Screenshot of the Actions run + the Code scanning alerts page |
-| 1:50–2:20 | **Task 3 — Blue team: pass the gate** (30 min) | Ensure the protected repo has no HIGH/CRITICAL findings and no secrets; fix or justify-and-document any (no blanket-ignore, per README §4) | Link to the passing run |
-| 2:20–3:00 | **Task 4 — Red team: Break the Build** (40 min) | On a branch/PR, inject *one* planted defect (per README §5): an outdated vulnerable dependency (e.g. an old `urllib3`), a `chmod 777` in a Dockerfile, or a hard-coded token; open the PR and watch the matching gate step fail | Screenshot of the **failing** gate step + which job caught it (Trivy SCA / Trivy config / Gitleaks) and which `exit-code: "1"` / `--error` step enforced it |
-| ⬚ (see note) | **Task 5 — Score Break-the-Build** (25 min) | One Blue point per finding the gate caught, one Red point per finding that slipped through; for any bypass, propose the rule that would have caught it | Scoreboard + one proposed gate improvement |
-| carry-over | **AI-resilient tasks + micro-demo + submit** | *Audit the AI* (critique an AI-written exploit or fix, quote the wrong line, produce the verified version), *Explain-in-Plain-English*, *Prompt Problem*; 2–3 rotating students give a 2–3 min "show your exploit/fix"; everyone submits | Written answers (start in class, finish as homework); worksheet PDF → Classroom; code → GitHub; weekly quiz → Google Form |
+| 0:25–0:40 | **Task 0 — Onboarding (15 min)** | Run the sample service; fire the three `:5001` curls above | Screenshot of the structured `event=…` security log lines for `authn_failure`, `authz_failure` and `authz_success` |
+| 0:40–1:15 | **Task 1 — Logging & fail-closed (35 min, A09/A10)** | Read `/admin` in `sample-service.py`; explain why the broad `except Exception` returns **403, not the secret**, and why `type(exc).__name__` (not the message) is logged (CWE-209); identify the line that would make it fail *open* — the commented INSECURE variant | The log lines + a 2–3 sentence explanation of fail-closed vs fail-open |
+| 1:15–1:40 | **Task 1b — Break the Build, live (25 min, A10 / CWE-636)** | `cd labs/week15-devsecops-pipeline && docker compose up`; as **Red**, hit the insecure admin route with **no** `Authorization` header — the fail-open path leaks the admin panel *and* the flag (the public demo flag on this local run; per-student only on a hosted instance); compare with `:8091` | The leaked `FLAG{…}`, the two contrasting `/admin` responses (`:8090` leak vs `:8091` deny), and the exact line in `insecure_service.py` that fails open |
+| 1:40–2:15 | **Task 2 — Stand up the gate (35 min)** | Push `security-ci.yml`, open the Actions run, confirm the three jobs (`semgrep`, `trivy`, `gitleaks`) execute and SARIF appears in the Security tab | Screenshot of the Actions run + the Code scanning alerts page |
+| 2:15–2:30 | **Slack — feedback and catch-up (15 min)** | Students behind on Tasks 0–1b catch up; students whose Task 2 run is still queued keep it in view | Instructor feedback on the evidence so far |
 
-**Timing note — the worksheet over-books this block, and that is a decision for you, not a silent trim.**
-The worksheet's own budgets are Task 0 (15) + Task 1 (35) + Task 1b (25) + Task 2 (35) + Task 3 (30)
-+ Task 4 (40) + Task 5 (25) = **205 min against a 180-min lab**, before the standard AI-resilient and
-micro-demo/submit blocks. The table above runs Tasks 0–4 as written and leaves Task 5 unplaced (⬚)
-because there is no honest slot for it. Pick one before the session and write it in:
-- **run Task 5 as homework** — the scoreboard needs the Red/Blue results, which only exist after the PRs land; or
-- **compress Tasks 2–4** — their budgets are dominated by Actions queue and scan wall-clock, not classroom
-  work, and all three deliverables (Actions run screenshot, link to a passing run, failing-gate screenshot)
-  are asynchronous: students can push in class and write up at home; or
-- **drop Task 1b's in-class run** to a demo from the front (it is the only task duplicated by Week 12's
-  flag workflow), recovering 25 min.
-Tasks 0, 1 and 1b run entirely on the student's own machine and fit the first 75 minutes as written.
-The AI-resilient tasks start in class and finish as homework, as the worksheet and
-[AGENDA.md](../../AGENDA.md) already specify; the micro-demo can roll to the next week or be sampled by viva.
+**Homework — submitted with the worksheet before the start of the next week's class**
+
+| Task | Student does | Evidence produced |
+|---|---|---|
+| **Task 3 — Blue team: pass the gate (30 min)** | Ensure the protected repo has no HIGH/CRITICAL findings and no secrets; fix or justify-and-document any (no blanket-ignore, per README §4). Expect a red baseline first: Semgrep flags the `uses: …@vN` tags and `host="0.0.0.0"`; Gitleaks flags the docs' own `curl-auth-header` examples (worksheet Task 3) | Link to the passing run |
+| **Task 4 — Red team: Break the Build (40 min)** | On a branch/PR, inject *one* planted defect (per README §5): an outdated vulnerable dependency (e.g. an old `urllib3`), a Dockerfile that runs as **root**, or a hard-coded token; open the PR and watch the matching gate step fail | Screenshot of the **failing** gate step + which job caught it (Trivy SCA / Trivy config / Gitleaks) and which `exit-code: "1"` / `--error` step enforced it |
+| **Task 5 — Score Break-the-Build (25 min)** | One Blue point per finding the gate caught, one Red point per finding that slipped through; for any bypass, propose the rule that would have caught it | Scoreboard + one proposed gate improvement |
+| **Part 4, *Audit the AI*, *Comprehension & Prompt*** | Reflection; critique an AI-written exploit or fix, quote the wrong line, produce the verified version; *Explain-in-Plain-English* and *Prompt Problem* | Written answers |
+
+Worksheet PDF → `learn.zcr.ai/submit`; code → GitHub. Due before the start of the next week's class; late work loses 10% per started day and reaches 0 after 10 days (`syllabus.md` §6).
+
+> **Do not re-time this week's tasks.** The worksheet's own budgets are Task 0 (15) + Task 1 (35)
+> + Task 1b (25) + Task 2 (35) + Task 3 (30) + Task 4 (40) + Task 5 (25) = **205 min**. That
+> over-booking is deliberate: Tasks 2–4 are dominated by Actions queue and scan wall-clock, not
+> classroom work. Task 4 feeds the Defense score and Task 5 produces the Break-the-Build
+> scoreboard, so trimming them silently changes graded work. There were three ways to absorb the
+> overrun:
+> - **run Task 5 as homework** — the scoreboard needs the Red/Blue results, which only exist after the PRs land;
+> - **compress Tasks 2–4 in class** — their budgets are dominated by Actions queue and scan
+>   wall-clock, and all three deliverables (Actions run screenshot, link to a passing run,
+>   failing-gate screenshot) are asynchronous: students push in class and write up at home;
+> - **drop Task 1b's in-class run** to a demo from the front (it is the only task duplicated by
+>   Week 12's flag workflow), recovering 25 min.
+>
+> This plan takes the first two, as [AGENDA.md](../../AGENDA.md) records: Tasks 0, 1, 1b and 2
+> (push the gate) run in class, and Tasks 3–5 are homework. Task 1b stays in class.
 
 **Formative checkpoints.** If a student's Task 1b `curl` against `:8090` returns
 `{"error":"forbidden"}`, they are on `:8091` — check the port before debugging anything else; the
 same mistake in reverse makes the "secure" service look broken. Task 2 should be *pushed* as early
-as possible even if the write-up comes later, because everything after it waits on an Actions run;
-a student blocked on GitHub (no repo, Actions disabled, no network) should complete Tasks 0, 1 and
-1b locally — run paths (a) and (b) above (`sample-service.py` on `:5001`, then the `docker compose`
-pair on `:8090`/`:8091`) — and carry Tasks 2–4 forward (the week's README numbers its two run paths
-differently). A student who
-cannot get Task 3 green is usually being failed by the Semgrep gate rather than by Trivy (see §8).
+as possible even if the write-up comes later, because Tasks 3–5 at home all wait on its Actions
+run; a student blocked on GitHub (no repo, Actions disabled, no network) should complete Tasks 0, 1
+and 1b locally — run paths (a) and (b) above (`sample-service.py` on `:5001`, then the
+`docker compose` pair on `:8090`/`:8091`) — and take Task 2 home with Tasks 3–4 (the week's README
+numbers its two run paths differently). A student who cannot get Task 3 green at home is usually
+being failed by the Semgrep gate rather than by Trivy (see §8).
 
 ## 6. Assessment for this week
 
@@ -185,9 +201,9 @@ Graded against Worksheet 15's own rubric (100 pts):
 | Worksheet 15 — Tasks + evidence (Part 3) | Tasks 0–5 complete; PR/run links, log lines, screenshots | P1–P6, A2 | 40 pts of the worksheet |
 | Worksheet 15 — Defense (gate + fail-closed) | Gate shown to fail closed on a planted defect; fail-closed path explained | K1–K2, P5–P6 | 25 pts of the worksheet |
 | Worksheet 15 — Reflection (Part 4) | Control → A09/A10 (or A02/A03) → CWE mapping, real incident, best-mitigation argument | K2, K4, A3 | 15 pts of the worksheet |
-| Weekly quiz (start of lecture) | Quiz score (Week 14 retrieval) | — | Part of the 10% quiz/participation component |
+| Weekly quiz (start of class) | Quiz score (Week 14 retrieval) | — | Part of the 10% quiz/participation component |
 | *Audit the AI* + *EiPE / Prompt Problem* | Critique + plain-English + verified prompt | CLO5 (course-spec §4) | Within the Defense / Reflection score |
-| Viva spot-check / micro-demo | Live reproduction and explanation | P1–P6 | Pass/flag for follow-up |
+| Viva spot-check (during the lab) | Live reproduction and explanation | P1–P6 | Pass/flag for follow-up |
 | Per-student flag (hosted instance) | Flag issued to the individual student by their own spawned "Break the Build" instance (`w15-devsecops`) on the hosted CTFd (`ctf.zcr.ai`); a local `docker compose up` serves the public demo value (`FLAG_DEVSECOPS` unset) and gives no attribution | A2 / CLO6 | Integrity control, not a mark |
 
 The worksheet component is part of the 30% weekly-worksheet weight in the course spec. Partial
@@ -219,13 +235,13 @@ admin token still works.
 | Port clash / wrong port. Three ports are in play (`5001`, `8090`, `8091`) and the two `/admin` services look alike. On macOS, ControlCenter/AirPlay squats **5000** (confirmed on the reference machine) — and `insecure_service.py` records that 8090 was chosen because ControlCenter squats **7000** | Keep the ports exactly as shipped; do not "tidy" `5001` to `5000`. Diagnose by response, not by memory: an unauthenticated `/admin` that returns `403` is `:8091`, one that returns `panel: UNLOCKED` is `:8090` |
 | Image-pull / install stampede: `docker compose up` runs `pip install --no-cache-dir flask` on **every** start for **both** services, on top of pulling `python:3.12-slim` | Pre-pull `python:3.12-slim` before the session and keep a USB copy (`docker save`/`docker load`); warn students that the first `docker compose up` needs the network even when the image is cached |
 | `FLAG_DEVSECOPS` unset (the normal state of a local `docker compose up`). Both services do `os.environ.get("FLAG_DEVSECOPS", …)`, so an unset variable silently falls back to the hard-coded default — every student then leaks the *same* public demo flag, and a local run cannot serve as the per-student integrity control | Do not try to fix this with a per-student `.env`: the student owns the machine and can read the file, or `docker exec … env`, before exploiting anything, so it is not a graded mechanism. The `docker-compose.yml` comment says the same (local = practice; graded flags come only from the hosted instance, `w15-devsecops` on `ctf.zcr.ai`, resolved at marking with `ctf_integrity_report.py`). Whether Week 15 sends students to it: ⬚ |
-| GitHub Actions is the only SaaS dependency in the whole course. Tasks 2–4 need network access, a repo the student **owns**, and Actions **enabled** — and the ethics note forbids pushing planted secrets or vulnerable code anywhere shared | Make "bring a fork or throwaway repo with Actions on" an explicit pre-class instruction (worksheet Part 3 prerequisites). Students who cannot get one still complete Tasks 0, 1 and 1b locally and carry 2–4 forward |
+| GitHub Actions is the only SaaS dependency in the whole course. Tasks 2–4 need network access, a repo the student **owns**, and Actions **enabled** — and the ethics note forbids pushing planted secrets or vulnerable code anywhere shared | Make "bring a fork or throwaway repo with Actions on" an explicit pre-class instruction (worksheet Part 3 prerequisites). Students who cannot get one still complete Tasks 0, 1 and 1b locally and take Task 2 home with Tasks 3–4 |
 | SARIF upload and the **Code scanning alerts** page may behave differently depending on repository visibility, so Task 2's second deliverable can be the step that fails | Confirm on the exact repository type students will use — ⬚ (not recorded in the repo, and not verified here). If the upload is rejected, Task 2's evidence falls back to the Actions run log, which still shows the three jobs executing |
-| Task 3 will not go green: the **Semgrep gate** step is `semgrep scan --config p/default --config p/owasp-top-ten --error`, which fails on **any** finding — it has no severity filter, unlike Trivy's `severity: HIGH,CRITICAL`. `README-pipeline.md` §4 describes the gate as HIGH/CRITICAL, so students reasonably expect low-severity Semgrep hits to pass | Tune the Semgrep ruleset in the workflow, which §4 explicitly invites ("rulesets for Semgrep … as the class matures"), and document it as a justified, time-boxed exception — not a blanket ignore. Do this *before* class if you intend Task 3 to be achievable in 30 min |
+| Task 3 will not go green: the **Semgrep gate** step is `semgrep scan --config p/default --config p/owasp-top-ten --error`, which fails on **any** finding — it has no severity filter, unlike Trivy's `severity: HIGH,CRITICAL`. `README-pipeline.md` §4 describes the gate as HIGH/CRITICAL, so students reasonably expect low-severity Semgrep hits to pass | Tune the Semgrep ruleset in the workflow, which §4 explicitly invites ("rulesets for Semgrep … as the class matures"), and document it as a justified, time-boxed exception — not a blanket ignore. Do this *before* students reach Task 3 (homework) if you intend it to be achievable in 30 min |
 | Gitleaks' gate step fails on **any** secret in the repo *or its history* (`fetch-depth: 0`), so a repo that already carries a committed secret can never go green. This repository handles that with a root `.gitleaks.toml` whose allowlist covers `labs/week15-devsecops-pipeline/.*` (among the other planted-secret labs) — a bare throwaway repo built from copied lab files has no such config | Point Task 3 at a clean repo, or carry the `.gitleaks.toml` allowlist across and have the student document it as the justified exception the task asks for. Do not solve it by deleting the gate step |
 | **New false-positive, verified 8 Oct 2026, not previously documented.** Current Gitleaks (`zricethezav/gitleaks:latest` = v8.30.0) has a default rule `curl-auth-header` that fires on the worksheet's *own* curl examples (`-H 'Authorization: alice-token'`). Scanning a fresh throwaway repo built from exactly the files the worksheet/README tell a student to copy (`worksheet.md`, `README.md`, `README-pipeline.md`, `security-ci.yml`, the three `.py` files) with no `.gitleaks.toml` carried over: `gitleaks detect --exit-code 1` → 3 findings, all `curl-auth-header` hits on the documented curl examples — not a real secret, and not the intended Task-4 defect. So Task 3 can fail purely from the lab's own documentation text, before any planted defect is added | Tell students up front: if Gitleaks flags `curl-auth-header` on a line that matches a worksheet/README example verbatim, that is an expected false positive (document it as a justified exception, same as the `.gitleaks.toml`-allowlist case above), not something to "fix" by deleting the curl line from their notes |
-| Task 4's `chmod 777` variant produces nothing to catch unless the repo actually contains a Dockerfile or IaC file — Trivy's `scan-type: config` has no target otherwise | Steer students without a Dockerfile to the vulnerable-dependency or hard-coded-token variants, both of which the Trivy `fs` and Gitleaks gates catch in any repo |
-| Floating upstream tags. The Semgrep job runs in `container: image: semgrep/semgrep:latest` and pulls `p/default` / `p/owasp-top-ten` from the registry; the Gitleaks job runs `zricethezav/gitleaks:latest`. A run that was green last term can be red this term without the repo changing | Expect it, and use it — a gate whose ruleset moves under you is exactly the vulnerability-management point in §1:35–1:55. Have one known-good run screenshotted in advance as a reference |
+| Task 4's run-as-root Dockerfile variant produces nothing to catch unless the repo actually contains a Dockerfile — Trivy's `scan-type: config` has no target otherwise | Steer students without a Dockerfile to the vulnerable-dependency or hard-coded-token variants, both of which the Trivy `fs` and Gitleaks gates catch in any repo |
+| Floating upstream tags. The Semgrep job runs in `container: image: semgrep/semgrep:latest` and pulls `p/default` / `p/owasp-top-ten` from the registry; the Gitleaks job runs `zricethezav/gitleaks:latest`. A run that was green last term can be red this term without the repo changing | Expect it, and use it — a gate whose ruleset moves under you is exactly the vulnerability-management point in the pre-class *Defences* block (§4). Have one known-good run screenshotted in advance as a reference |
 | Version drift between the lab template and the repo's own gate: the lab file pins `github/codeql-action/upload-sarif@v3`, while `.github/workflows/security-ci.yml` was bumped to a v4 SHA | Leave the lab template as it stands — `labs/` is deliberately excluded from Dependabot (see `.github/dependabot.yml`) and the pins are teaching material. Mention the drift in class as a live example of what Dependabot exists to surface |
 | Copy-paste of a classmate's evidence | A flag issued per student by a hosted instance is attributable (`ctf_integrity_report.py`); the local Task 1b flag is the public demo value and proves nothing either way. Actions run links and Code scanning alert pages are repo-specific; viva spot-check the pair |
 
@@ -235,6 +251,7 @@ admin token still works.
 
 - Attendance / completion: ⬚
 - Time actually taken per task (vs. plan): ⬚
+- How the in-class / homework split worked — did every student push Task 2's gate in class?: ⬚
 - Where the class got stuck, and what unblocked them: ⬚
 - Misconception that showed up in the *Explain-in-Plain-English* answers: ⬚
 - Quality of the *Audit the AI* critiques (did students catch the planted flaw?): ⬚

@@ -24,7 +24,7 @@
 | 3 | **Pop the Alert** — fire `alert(document.domain)` stored for another user | Stored XSS (W5) | 15 |
 | 4 | **Not Your Order** — read another user's order object | IDOR (W6) | 15 |
 | 5 | **Forge Ahead** — become admin with a forged JWT | Broken JWT (W6) | 15 |
-| 6 | **Crack It** — recover a password from a weak hash | Crypto (W3) | 15 |
+| 6 | **Crack It** — recover a password from a weak hash | Crypto (Cryptography course hash lab) | 15 |
 | 7 | **Penguin** — recover the plaintext structure from the ECB oracle | Crypto (W3) | 10 |
 
 **Submission table (fill in):**

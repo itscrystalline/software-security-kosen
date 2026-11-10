@@ -91,9 +91,9 @@ plus one Section B item and one Section D item.
 
 ## 4. The 120-minute block — logistics
 
-`AGENDA.md` budgets **120 min** for the midterm written block and nothing else; it does not budget
-briefing or settling time, so the pre-clock allowance is **⬚** and must come from the faculty's own
-exam regulations. Order of business follows the proctor deck `slides/week08.md`:
+`AGENDA.md` budgets **120 min** for the midterm written paper, inside the 150-min class, and
+nothing else; it does not say how the other 30 min are used for briefing or settling, so the
+pre-clock allowance is **⬚** and must come from the faculty's own exam regulations. Order of business follows the proctor deck `slides/week08.md`:
 
 | Step | Action | Source |
 |---|---|---|

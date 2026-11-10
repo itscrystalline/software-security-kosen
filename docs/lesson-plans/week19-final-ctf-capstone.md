@@ -12,16 +12,13 @@
 | **Standards** | The ids the source weeks' READMEs attach: **A05** Injection · CWE-89, CWE-78 (W4) · **A05** Injection · CWE-79, CWE-352 (W5) · **A01** Broken Access Control, **A07** Authentication Failures · CWE-639, CWE-287 (W6) · **API1** BOLA, **API3** broken object property level auth (mass assignment), **API4** unrestricted resource consumption (W10) · CWE-787, CWE-121, CWE-416, CWE-134, CWE-193 (W11) · **A03** Software Supply Chain Failures, **A08** Software or Data Integrity Failures · CWE-1104, CWE-829 (W12) · **A02** Security Misconfiguration · CWE-732, CWE-16 (W13) · **LLM01** Prompt Injection, **LLM02** Sensitive Info Disclosure, **LLM05** Improper Output Handling, **LLM06** Excessive Agency, **LLM08** Vector/Embedding Weaknesses, **LLM10** Unbounded Consumption (W14) · **A09** Security Logging & Alerting Failures, **A10** Mishandling of Exceptional Conditions (W15) |
 | **CLOs addressed** | **CLO2** exploit · **CLO3** remediate · **CLO5** evaluate & communicate · **CLO6** evidence & ethics (course specification §6, row 19) |
 
-> **KOSEN-KMITL 02005094 runs a 150-min class (subject sheet, Oct 2026).** The timings below were
-> written for a longer block; the 150-min agenda is in [AGENDA.md](../../AGENDA.md).
-
 ---
 
 ## 1. Session objectives
 
-This is an assessment, not a teaching session. It carries **two separate instruments in one room** —
-a team CTF and a graded team demo — and they feed two different gradebook columns (§5). What the
-sitting is designed to evidence:
+This is an assessment, not a teaching session. It carries **two separate instruments** — a team CTF,
+sat in the room, and a graded team demo, submitted beforehand as a video with the report — and they
+feed two different gradebook columns (§5). What the sitting is designed to evidence:
 
 **Knowledge (K)**
 - K1 — For each challenge solved, state in one line the control that would have prevented it
@@ -88,8 +85,8 @@ from 150 to 165.
 Each team presents its secured build: threat model → vulnerabilities found → remediation; SBOM +
 signed artifact; security CI/CD pipeline. **Format (graded):** each team submits a recorded
 video walkthrough linked in the report and **due with it** (graded asynchronously against the project rubric);
-there is no per-team slot — only teams the instructor flags get a short live Q&A, a viva spot-check, not a re-demo
-(`labs/week19-final-ctf-capstone/README.md`; `AGENDA.md` §*Week 19*). `ctf.md` line 6 says the demo
+there is no per-team slot — only teams the instructor flags get a short live Q&A, outside the CTF time
+(§4) — a viva spot-check, not a re-demo (`labs/week19-final-ctf-capstone/README.md`; `AGENDA.md` §*Week 19*). `ctf.md` line 6 says the demo
 *"is scored separately"* and links the rubric — see the cross-reference defect noted in §5.
 
 **CLO coverage.** Challenges 1–14 evidence **CLO2**; the per-challenge mitigation line is the
@@ -240,14 +237,16 @@ instance they used before anything else.
   team handles that), and how one team score is entered against several students (§5).
 - **Sharing inside a team is permitted; per-student flags therefore detect *cross-team* sharing
   only.** This is the opposite of the Week 9 individual sitting and changes what §6 can promise.
-- Room / seating / invigilator count / demo room(s): ⬚ (not recorded in this repository).
+- Room / seating / invigilator count, and where flagged teams' Q&A is held: ⬚ (not recorded in this
+  repository).
 - Students work on their own machines; "phones away; one device" (`instructor/anti-cheating.md` §C).
 - Network is needed **throughout** for the hosted challenges (1–8, 12 and 14): the instances are reached
   over it, as is the submission Form. Have every student log in to CTFd and spawn a first instance
   **before the clock starts** (§4). It is also needed for image pulls and `pip install` at start-up
   of the local copies, Trivy's vulnerability database and Cosign's OIDC flow.
-- The class size the timetable assumes is N≈80–120 (`AGENDA.md`) — see the demo-throughput
-  arithmetic in §9, which needs a decision *before* the day.
+- Class size: `slides/week19.md`'s speaker note assumes "N≈80–120 students in teams of 2–3".
+  With no in-class demo block it no longer bears on the timetable, only on hosted-platform capacity
+  (§9).
 
 ### 3.4 Test the day before
 
@@ -287,23 +286,24 @@ instance they used before anything else.
 - [ ] Submission Form open/close times set, with the settings from `instructor/anti-cheating.md` §C
       (restrict to the cohort's accounts, collect email, one response, auto-close).
 - [ ] **Video deadline published to teams in advance** — the video link goes in the report and is
-      due with it; decide before the day which flagged teams (if any) to call for a short live Q&A.
+      due with it; decide before the day which flagged teams (if any) to call for a short live Q&A,
+      and when — `AGENDA.md` puts it outside the CTF time but gives it no slot: ⬚ (§4).
 - [ ] The Week 16 scrimmage and the Week 17 mock CTF have been run — both state they are the same
       format as this tournament (`labs/week16-capstone/scrimmage.md`,
       `labs/week17-review-final-prep/mock-ctf.md`).
-- [ ] Projector/display for the leaderboard and the demos: ⬚.
+- [ ] Projector/display for the leaderboard: ⬚.
 
-## 4. Run of show — the 240-minute block
+## 4. Run of show — 150 min
 
-Timings are `AGENDA.md`'s (*Week 19 — Final CTF + project demos*): `0:00–2:30` capstone CTF
-tournament, `2:30–4:00` graded final project demos.
+Timings are `AGENDA.md`'s (*Week 19 — Final CTF + project demos (150 min)*): `0:00–2:30` capstone
+CTF tournament, which fills the class. The project demo has no block of its own: the videos are
+graded beforehand, and flagged teams' Q&A happens outside the CTF time (below).
 
 | Time | Block | Instructor does | Students do |
 |---|---|---|---|
 | 0:00–0:10 *(inside the 150)* | **Briefing + target check** | Make #8 Smash (CTFd id 15) visible — it is hidden until now (§3.1). Run `slides/week19.md`: the two parts, the 150-minute window, the submit format (flag/proof + payload/command + one-line mitigation), the rules (provided targets only, one submission per team per challenge, document method), that graded flags for challenges 1–8, 12 and 14 are per-student and come only from **your own hosted instance** (a local run serves demo flags, which are not graded flags) and copying across teams is traceable, and, for local copies, the **port-8080 warning** (below). Confirm everyone can log in to CTFd and reach a spawned instance, and that Docker / `make` works for the local-only challenges | Log in and spawn the hosted instances they need; stand up the local targets; report anything that will not start or connect **now**, not at 1:00 |
 | 0:10–2:30 | **Competition window** | Invigilate; answer environment questions only, not challenge questions; announce first bloods aloud for hype (`slides/week19.md`); watch for demo/placeholder flags — a student on a local copy (§3.2) | Solve challenges 1–14 in any order; fill the three columns per challenge as they go |
 | 2:30 | **Submission cutoff** | Close the Form / collect the paper tables | Submit flags + payload/command + one-line mitigation |
-| 2:30–4:00 | **Viva spot-checks (flagged teams only)** | Call only the teams you flagged while grading the videos; ask one or two unscripted probing questions ("why this fix and not X?", "what does this SBOM line mean?") — the built-in viva (`anti-cheating.md` §D). Confirm the CI pipeline failing on a finding was shown in the submitted video (`slides/week19.md`) rather than re-demoing it live | Flagged teams only: answer the live Q&A on the video already submitted with the report (graded asynchronously on the project rubric) — not a re-demo, per `labs/week19-final-ctf-capstone/README.md` |
 
 **Port warning to give in the briefing (local copies only).** `labs/week04-injection`,
 `labs/week05-xss-client-side`, `labs/week06-authn-authz`, `labs/week10-api-security`
@@ -311,12 +311,25 @@ tournament, `2:30–4:00` graded final project demos.
 local copies at once will hit it. How hosted instances are addressed, and whether they can collide
 with these: ⬚. See §9 for the fix.
 
-**Two demands competing for the same 240 minutes, both real:**
+**Flagged teams' Q&A — outside the CTF time; slot ⬚.** `AGENDA.md`'s *Demo format (decision
+2026-10-24)* note calls only the teams the instructor flags (report ≠ repo, a similarity hit, work the
+team can't account for) for a short live Q&A, "outside the CTF time". The CTF fills the class, and
+when the Q&A happens is not stated: ⬚. The other sources word it differently:
+`labs/week19-final-ctf-capstone/README.md` says the instructor "may call a team aside" in class, and
+`slides/week19.md`'s speaker note says "after the CTF". Plan to `AGENDA.md`, and do not pull a team
+out of the competition window. In the Q&A, call only the teams you flagged while grading the videos;
+ask one or two unscripted probing questions ("why this fix and not X?", "what does this SBOM line
+mean?") — the built-in viva (`anti-cheating.md` §D). Confirm the CI pipeline failing on a finding was
+shown in the submitted video (`slides/week19.md`) rather than re-demoing it live. Flagged teams answer
+on the video already submitted with the report (graded asynchronously on the project rubric) — not a
+re-demo, per `labs/week19-final-ctf-capstone/README.md`.
+
+**Two things with no slot in the 150 minutes:**
 1. `slides/week19.md`'s closing note records that the research **post-test + post-survey happen
-   now** (`instructor/research/`; the post-test is 20 MCQ + 2 applied items). No slot for it exists
-   in `AGENDA.md`'s 240 minutes; duration and placement: ⬚.
-2. Resolved 2026-10-24: no per-team Q&A — only flagged teams are called, so the block fits any
-   cohort size (`AGENDA.md` §*Week 19*).
+   now** (`instructor/research/`; the post-test is 20 MCQ + 2 applied items). The CTF fills
+   `AGENDA.md`'s 150 minutes, so no slot for it exists; duration and placement: ⬚.
+2. The flagged teams' Q&A (above). Resolved 2026-10-24: there is no per-team Q&A — only flagged
+   teams are called (`AGENDA.md` §*Week 19*) — but no slot is given for those: ⬚.
 
 ## 5. Scoring — how points become marks
 
@@ -378,7 +391,7 @@ Absence / make-up / late policy for an exam sitting: ⬚ (institutional). The ge
 | **Per-team NoteVault marker** | `TEAM_ID` seeds an `hmac(TEAM_SALT, TEAM_ID)`-derived marker into the app's own data (`project/starter-app/README.md`; `anti-cheating.md` §A) | A demo, report or screenshot carrying another team's marker |
 | **Identity-stamped evidence** | Screenshots must carry the student's terminal `whoami` / login email / student ID **and** a timestamp | Borrowed or generic screenshots (`anti-cheating.md` §B) |
 | **Method note per challenge** | The payload/command + mitigation columns of `ctf.md` | A flag held without the mechanism; also the basis for partial credit |
-| **Live viva at the demo** | One or two unscripted questions per team, scored as part of Q&A | A team that copied a report or a fix and cannot improvise on it (`project/README.md`; `anti-cheating.md` §D) |
+| **Live viva (flagged teams only)** | One or two unscripted questions to each team called for the Q&A outside the CTF time (§4) | A team that copied a report or a fix and cannot improvise on it (`project/README.md`; `anti-cheating.md` §D) |
 | **Similarity checking** | The same MOSS/JPlag pass used on weekly forks, run on **team project repos** at the Week 19 milestone — report PDFs through MOSS's plain-text mode too | Verbatim copying between teams (`anti-cheating.md` §B) |
 | **Scoreboard freeze** | CTFd → Settings → Freeze time for the window | Progress leaking between teams mid-sitting (`CTFd-SETUP.md` §4) |
 | **Dynamic scoring + first blood** | Already configured on the live board (per challenge: initial 100–300, minimum 50–150, decay 25; 50 for the boss) | Reduces the incentive to pool answers (`anti-cheating.md` §C) |
@@ -390,8 +403,8 @@ Absence / make-up / late policy for an exam sitting: ⬚ (institutional). The ge
   prove *which team* a flag reached, not which student typed it. Individual mastery is evidenced
   elsewhere in the course (worksheets, quizzes, W8/W9/W18), not by this tournament.
 - **Challenges 9, 10, 11 and 13 have no hosted instance and carry no per-student flag** (§3.2).
-  Their attribution rests on identity-stamped evidence, the method note and the demo viva — weight
-  the spot-checks towards them.
+  Their attribution rests on identity-stamped evidence, the method note and the viva for flagged
+  teams — weight the spot-checks towards them.
 - A `…_demo` / placeholder flag means the student worked on a **local copy**, not that they cheated
   (§3.2). It is public, so it proves nothing either way; ask which instance they used before
   accusing anyone. How a demo flag is scored: ⬚.
@@ -413,11 +426,12 @@ Absence / make-up / late policy for an exam sitting: ⬚ (institutional). The ge
 
 ## 7. After the session — debrief and how results feed the final mark
 
-- **Debrief.** `AGENDA.md` allocates no debrief inside the 240 minutes, and this is the last week of
-  term — there is no following session to borrow an opening block from, as Week 9 borrows Week 10's.
-  What `slides/week19.md` closes with instead: name the arc (threat-model → break → fix → ship),
-  point to next steps (OWASP, CTFs, the readings), and celebrate. Where a real
-  post-mortem/results debrief happens, if at all: ⬚.
+- **Debrief.** `AGENDA.md` allocates no debrief inside Week 19's 150 minutes — the CTF fills the
+  class. The debrief is [Week 20](week20-exam-feedback-reflection.md) (examination feedback & course
+  reflection, 150 min), which opens by walking through the final written exam and the capstone CTF
+  (`AGENDA.md`, *Week 20*, 0:00–0:45). What `slides/week19.md` closes with today: name the arc
+  (threat-model → break → fix → ship), point to next steps (OWASP, CTFs, the readings), and
+  celebrate.
 - **Marking.** Keys are instructor-only and git-ignored:
   `instructor/exams/week19-final-ctf-capstone-ctf-answers.md` for the tournament; the project rubric
   in `project/README.md` for the demo. Never copy any key content into this repository's public files.
@@ -464,7 +478,7 @@ Absence / make-up / late policy for an exam sitting: ⬚ (institutional). The ge
 
 | Risk | Mitigation |
 |---|---|
-| **The demo block does not fit the largest cohorts.** `AGENDA.md` gives 90 min (2:30–4:00); a strict live 10-min-demo + 5-min-Q&A format would be **15 min/team → 6 slots**, which cannot seat the ~27–60 teams N≈80–120 (`AGENDA.md`) implies in teams of 2–3 | **Resolved by `AGENDA.md` (decision 2026-10-24):** each team's video walkthrough is linked in the report, due with it, and graded asynchronously on the project rubric; there is no per-team Q&A slot — only teams the instructor flags are called for a short live Q&A, so the block fits any cohort size (`AGENDA.md` §*Week 19*) |
+| **Flagged-team Q&A has no scheduled slot.** `AGENDA.md`'s *Demo format (decision 2026-10-24)* calls flagged teams for a short live Q&A "outside the CTF time", and the CTF fills the class (0:00–2:30), so the timetable leaves it no slot. `labs/week19-final-ctf-capstone/README.md` ("may call a team aside" in class) and `slides/week19.md` ("after the CTF") disagree on when it happens | Flag teams while grading the videos, before the day (§3.4), and decide and announce when and where each flagged team is called: ⬚. Do not pull a team out of the competition window — that is inside the CTF time, which `AGENDA.md` rules out |
 | **Five-way port-8080 collision (local copies).** W4, W5, W6, W10 (`vulnerable-api`) and `project/starter-app` all publish 8080; a team running several local copies at once hits it | Brief at 0:00–0:10: `docker compose down` one before the next, or override the **left** side of the ports mapping. The Flask apps listen on 5000 *inside* the W4/W5/W6/W10 containers — do not republish 5000 (macOS AirPlay squats 5000, not 8080). W10's `solution-api` already takes 8081; W14 uses 8082/8083; a local CTFd, if run, uses 8000 |
 | **Burp on its default listener.** The Week 6 worksheet's optional Burp step proxies through `127.0.0.1:8080` — the same port the targets publish | Move either Burp's listener or the target's published port |
 | **Student works on a local copy → demo flag.** Verified: with no `.env`, compose renders `FLAG_*: null` in all four local labs (W4, W6, W10, W14) and the app falls back to its committed placeholder | Brief it at 0:00: graded flags for 1–8, 12 and 14 come only from your own hosted instance. Treat a placeholder flag on a sheet as "worked locally", not as cheating; ask which instance was used. Do not try to fix it by seeding per-student `.env` files — the student owns the file |
@@ -476,7 +490,7 @@ Absence / make-up / late policy for an exam sitting: ⬚ (institutional). The ge
 | **W12/W13 need the network and the Docker socket.** `sca_scan.sh`, `sign.sh` and `scan.sh` run `aquasec/trivy:latest` with `-v /var/run/docker.sock:/var/run/docker.sock`, and Trivy fetches its vulnerability DB | Pre-pull `aquasec/trivy:latest` and warm the DB the day before. A locked-down machine that forbids socket mounts cannot run these — check in the target check, not at 1:00 |
 | **Cosign needs a browser OIDC flow and registry push access** — `sign.sh` says so itself, and calls it "a guided demo, not an offline step" in class | Do not gate challenge 10 or a demo on live keyless signing. Accept a previously produced signature + the verification command as the evidence (`week16-capstone/worksheet.md` Part 3 A, deliverable 5) |
 | **PyPI reachability at start-up.** W4/W5/W6/W10 `pip install flask` (W6 also `pyjwt`; W14 and W15 `flask`) at container start; a whole room starting at once needs the network | Pre-pull `python:3.12-slim`; keep a USB `docker save`/`docker load` copy; use the 0:00–0:10 target check to surface failures before the clock matters |
-| **The hosted platform is unavailable, or cannot hold the room.** It spawns challenges 1–8, 12 and 14 and issues their flags; N≈80–120 students (`AGENDA.md`) may all spawn at once (capacity: ⬚) | Local Docker serves demo flags only, so per-student attribution for those ten is lost for that window; challenges 9, 10, 11 and 13 are unaffected. Decide the fallback before the day (extend, reschedule, or accept identity-stamped evidence only) and record it: ⬚. The board itself is engagement only; the submission of record is the Form / Classroom ([SUBMISSION.md](../../SUBMISSION.md)), and `ctf.md`'s submission table works on paper |
+| **The hosted platform is unavailable, or cannot hold the room.** It spawns challenges 1–8, 12 and 14 and issues their flags; N≈80–120 students (`slides/week19.md` speaker note) may all spawn at once (capacity: ⬚) | Local Docker serves demo flags only, so per-student attribution for those ten is lost for that window; challenges 9, 10, 11 and 13 are unaffected. Decide the fallback before the day (extend, reschedule, or accept identity-stamped evidence only) and record it: ⬚. The board itself is engagement only; the submission of record is the Form / Classroom ([SUBMISSION.md](../../SUBMISSION.md)), and `ctf.md`'s submission table works on paper |
 | **A student or team cannot reach their hosted instance** | Sort it in the 0:00–0:10 target check; how instances are reached, and any spare-machine provision: ⬚ (not recorded in this repository) |
 | **The CTFd board and the paper disagree** — different titles and point values, three challenges that are not on the paper (*NoteVault Boss*, *ECB + Hardcoded Key*, *Crack It*), and no CTFd entry for paper challenges 9, 10, 11 and 13 (§3.1) | Announce at 0:00 which board is graded (the paper is), and either hide the extras or state that they score participation only |
 | **NoteVault is not hardened for shared hosting.** `instructor/PLATFORM-ROADMAP.md` records that `project/starter-app/app.py` runs with Flask `debug=True` — an active Werkzeug console — and must be turned off before any lab is baked for shared multi-tenant spawning | Keep NoteVault on the team's own machine for the demo, as the delivery model already assumes; do not stand `project/starter-app` up on a shared host for this session. The platform also hosts a `notevault` Boss image (not on the paper, so a caveat rather than a graded dependency); whether its `debug=True` console was disabled: ⬚ |
@@ -496,22 +510,24 @@ Absence / make-up / late policy for an exam sitting: ⬚ (institutional). The ge
    dies**, the hosted challenges cannot be spawned or reached — see the hosted-platform row in §9's
    risks table; the paper table is still the record for everything else.
 4. **A team's pre-recorded video is missing or will not play.** The pre-recorded format removes
-   the live-exploit-fails failure mode from this block — there is no live attack segment left to
-   fall back from. A missing/unplayable video is a missing deliverable against `project/README.md`'s
-   rubric, not a live-demo contingency; call that team for a short live Q&A on whatever artefacts
-   it can show and record the gap for marking. Exactly how the rubric penalizes a missing video: ⬚.
+   the live-exploit-fails failure mode — there is no live attack segment in the session to fall back
+   from. A missing/unplayable video is a missing deliverable against `project/README.md`'s
+   rubric, not a live-demo contingency; call that team for a short live Q&A (outside the CTF time,
+   §4) on whatever artefacts it can show and record the gap for marking. Exactly how the rubric penalizes a missing video: ⬚.
 5. **Widespread failure to start targets or reach the hosted instances inside the first 10
    minutes.** That is exactly what the 0:00–0:10 target check exists to expose. The repository
-   defines no fallback adjustment to the 150-minute window, and this is the last session of term so
-   there is nothing to postpone into — the decision and its justification are the instructor's, and
-   must be recorded: ⬚.
+   defines no fallback adjustment to the 150-minute window. Week 20 follows, but `AGENDA.md` gives it
+   no CTF time — it is examination feedback and course reflection, with "nothing graded" — so it is
+   not a stated fallback. The decision and its justification are the instructor's, and must be
+   recorded: ⬚.
 
 ## 10. Post-teaching reflection
 
 *Complete after the session — this also feeds the course's engagement data.*
 
 - Attendance / completion: ⬚
-- Time actually taken per block (vs. plan) — did the CTF hold to 150 min and did every team demo: ⬚
+- Time actually taken per block (vs. plan) — did the CTF hold to 150 min: ⬚
+- Teams flagged for the Q&A, and when and where each was called: ⬚
 - Where the class got stuck, and what unblocked them: ⬚
 - Challenge with the lowest solve rate, and what that says about the week it came from: ⬚
 - Integrity flags raised by `ctf_integrity_report.py` / the NoteVault `TEAM_ID` marker, and how each resolved: ⬚

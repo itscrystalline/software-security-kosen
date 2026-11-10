@@ -4,15 +4,12 @@
 |---|---|
 | **Course** | Software Security 2 (02005094, KOSEN-KMITL) |
 | **Week / date** | 7 · ⬚ |
-| **Contact time** | 150 min, one continuous block (`AGENDA.md`, *Week 7 & 17 — Review*): review quiz 25 + Security Jeopardy 40 + mock CTF 75 (ungraded; finished at home) + debrief 10 |
+| **Contact time** | 150 min, one continuous block (`AGENDA.md`, *Week 7 & 17 — Review*): review quiz 30 + Security Jeopardy 35 + mock CTF 75 (ungraded; finished at home) + debrief 10 |
 | **Lab folder** | `labs/week07-review-midterm-prep` |
 | **Slides** | `slides/week07.md` |
 | **Type** | Review — **no new content**. Consolidates Weeks 1–6 |
 | **Standards consolidated** | OWASP 2025 **A01** Broken Access Control · **A02** Security Misconfiguration · **A04** Cryptographic Failures · **A05** Injection · **A06** Insecure Design · **A07** Authentication Failures · CWE-501, 798, 489, 327, 916, 330, 89, 78, 434, 79, 352, 1004, 639, 287, 347, 321 |
 | **CLOs addressed** | **CLO1–CLO4** (course specification §6, week 7 row) |
-
-> **KOSEN-KMITL 02005094 runs a 150-min class (subject sheet, Oct 2026).** The timings below were
-> written for a longer block; the 150-min agenda is in [AGENDA.md](../../AGENDA.md).
 
 ---
 
@@ -26,7 +23,7 @@ By the end of this week a student can:
 - K3 — Describe the shape of both midterm papers — what the Week 8 written exam asks for and what the Week 9 practical asks for — well enough to plan revision time against it.
 
 **Skills (P)**
-- P1 — Re-land each of the six mock-CTF challenges under exam conditions and timing, unaided by the worksheet's step-by-step instructions.
+- P1 — Re-land each of the six mock-CTF challenges unaided by the worksheet's step-by-step instructions — under exam conditions for the 75 in-class minutes, and at home for any not reached in class.
 - P2 — For each challenge solved, give the one-line fix/mitigation — one of the three things the Week 9 submission table requires (flag, payload/command, one-line mitigation) — and, separately, name the CWE, which today's mock-CTF warm-up requires (`mock-ctf.md`) but the Week 9 table does not.
 - P3 — Produce a one-page cheat sheet that is their own compression of the half-term, not a transcription of the slides.
 - P4 — Identify, honestly, which topics they cannot yet do unaided, and say so in the debrief.
@@ -85,21 +82,22 @@ challenges are drawn from Weeks 3–6 only. Threat modelling and tooling are car
 the Jeopardy board and Quiz 1, and they are examined in the **Week 8 written paper**. A student who
 revises only from the mock CTF will walk into Week 8 having skipped two of the six weeks.
 
-## 5. Session run-sheet — 300 min
+## 5. Session run-sheet — 150 min
 
-Timings are AGENDA.md's review-week agenda (Weeks 7 & 17).
+Timings are AGENDA.md's review-week agenda (*Week 7 & 17 — Review (150 min)*). There is no break.
 
 | Time | Block | What happens |
 |---|---|---|
 | 0:00–0:30 | **Cumulative review quiz** | Quiz 1 (`quizzes/quiz1.md`) — 25 pts, 30 min |
-| 0:30–1:45 | **Security Jeopardy** | Team quiz-show across the six topics |
-| 1:45–2:00 | **Break** | Students bring up their mock-CTF targets during the break |
-| 2:00–4:30 | **Mock CTF** | `labs/week07-review-midterm-prep/mock-ctf.md`, in the Week 9 format |
-| 4:30–5:00 | **Debrief** | Common mistakes (§6) + midterm logistics (§7) |
+| 0:30–1:05 | **Security Jeopardy** | Team quiz-show across the six topics |
+| 1:05–2:20 | **Mock CTF** | `labs/week07-review-midterm-prep/mock-ctf.md`, in the Week 9 format — the first 75 min in class; it is ungraded practice, so students finish the remaining challenges at home |
+| 2:20–2:30 | **Debrief** | Common mistakes (§6) + midterm logistics (§7) |
 
-*(The presenter notes in `slides/week07.md` sketch a shorter shape — roughly 60–75 min of Jeopardy
-and ~90 min of mock CTF. AGENDA.md and `mock-ctf.md` both say ~150 min for the CTF; follow AGENDA.
-This is documentation drift, in the same family as AGENDA.md's own "drift to resolve" note.)*
+*(The presenter notes in `slides/week07.md` still describe the longer review block: a ~5 h session,
+a 30-min quiz, roughly 60–75 min of Jeopardy and ~150 min of mock CTF. AGENDA.md now gives 35 min
+of Jeopardy and 75 min of mock CTF in class, and `mock-ctf.md` keeps ~150 min of challenges with
+about 75 of them in class and the rest at home. Follow AGENDA; the slide notes are documentation
+drift.)*
 
 ### 5.1 Cumulative review quiz — 0:00–0:30
 
@@ -113,6 +111,8 @@ This is documentation drift, in the same family as AGENDA.md's own "drift to res
 | Delivery | Google Form (SUBMISSION.md; Forms are built with `instructor/make_quiz_forms.gs`), individual, one attempt, shuffled, locked to the school account. `quiz1.md` prints as the paper fallback |
 | Where it counts | The 10% weekly-quizzes / participation component |
 
+**Quiz time — decided.** The quiz keeps the 30 min that `quiz1.md` states (owner, 2026-10-31); Security Jeopardy gives up 5 min to make room, so the class stays 150 min.
+
 Weeks 7 and 17 deliberately have **no** `quizzes/weekly/weekNN.md` 6-question quiz — the cumulative
 quiz *is* this week's retrieval practice.
 
@@ -120,12 +120,15 @@ quiz *is* this week's retrieval practice.
 or three MCQs and/or the Part B/C alternates from the review-quiz item bank into a cohort copy,
 keeping the total at 25 pts (10 × 1 + 3 × 3 + 2 × 3).
 
-### 5.2 Security Jeopardy — 0:30–1:45
+### 5.2 Security Jeopardy — 0:30–1:05
 
 - **Categories** — exactly the six in the lab README, one per week under review:
   *Threat Modeling · Tooling · Crypto · Injection · XSS · Auth & Access*.
 - **Board** — 6 categories × 5 point values, plus a **Final Jeopardy wager** at the end
   (`slides/week07.md` presenter note). Prepare it before the session; nothing ships in the repo.
+- **Fit** — the presenter note sizes that board for a ~60–75-min round; AGENDA gives the block
+  35 min and no breakdown. Whether the full board and the wager fit in 35 min, and what gives if
+  they do not, is ⬚ — no source says.
 - **Teams** — run by Houses (non-graded engagement layer, per course specification §7).
 - **Rules** — the team picks a square and answers; a wrong answer *loses* the points. Keep it fast.
 - **Points** — award them into the CTFd / Houses board if the scoreboard is running; the Awards
@@ -133,13 +136,16 @@ keeping the total at 25 pts (10 × 1 + 3 × 3 + 2 × 3).
 - **Purpose** — this is the retrieval-practice slot for Weeks 1 and 2, which the mock CTF does not
   reach. Weight the board accordingly rather than filling it with injection questions.
 
-### 5.3 Mock CTF — 2:00–4:30
+### 5.3 Mock CTF — 1:05–2:20
 
-**How it is run.** `labs/week07-review-midterm-prep/mock-ctf.md`: ~150 min, individual **or pairs**,
-sandbox targets only, **hints included**, **ungraded (participation)**, no real exam flags. For each
-challenge the student records their payload/command plus a one-line fix, then self-checks against the
-linked solution file. Warm-up (concepts): draw a 3-element STRIDE table for any one target, and name
-the CWE for each challenge solved.
+**How it is run.** `labs/week07-review-midterm-prep/mock-ctf.md`: ~150 min of challenges — about
+75 min in class, and students finish the rest at home (it is ungraded practice). Individual
+**or pairs**, sandbox targets only, **hints included**, **ungraded (participation)**, no real exam
+flags.
+For each challenge the student records their payload/command plus a one-line fix, then self-checks
+against the linked solution file. Warm-up (concepts): draw a 3-element STRIDE table for any one
+target, and name the CWE for each challenge solved. Which challenges run in the 75 in-class minutes
+and which go home is ⬚ — neither AGENDA nor `mock-ctf.md` assigns them.
 
 | # | Challenge | Topic | Hint given in the file | Self-check against |
 |---|---|---|---|---|
@@ -173,18 +179,22 @@ weekly games is CTFd **Awards** (`instructor/CTFd-SETUP.md` §6: 1st/2nd/3rd = 3
 first-blood +100, most creative +50). Do not describe CTFd's dynamic scoring or point-costing hints
 as the mock's scoring model — those apply to the flag-bearing challenge set, not to this session.
 
-**Formative checkpoints.** By 3:00 every student should have landed at least challenges 1 and 4 —
-they are the two shortest paths and the two whose Week 9 counterparts carry 15 pts each. A student
-still stuck on #1 at 3:00 is usually re-typing a payload rather than reading the query it produces;
-send them to the query comment in `labs/week04-injection/vulnerable_app.py` (lines 61–63). A student
-who has solved everything by 3:30 should attempt the ECB-oracle work from Week 3 — Week 9 has such a
-challenge and the mock does not (§7).
+**Formative checkpoints.** By 2:05 — an hour into the mock, as in the longer block — every student
+should have landed at least challenges 1 and 4: they are the two shortest paths and the two whose
+Week 9 counterparts carry 15 pts each. That hour assumed the targets were already up when the block
+started; when they come up now is ⬚ (§10, risk 2). A student still stuck on #1 at 2:05 is usually
+re-typing a payload rather than reading the query it produces; send them to the query comment in
+`labs/week04-injection/vulnerable_app.py` (lines 61–63). A student who has solved all six — in class
+or at home — should attempt the ECB-oracle work from Week 3: Week 9 has such a challenge and the
+mock does not (§7).
 
-### 5.4 Debrief — 4:30–5:00
+### 5.4 Debrief — 2:20–2:30
 
 Run §6's misconception list against the room ("hands up who is shaky on this one") and drill the two
 or three that draw the most hands, then give the Week 8/9 logistics from §7. Close by collecting or
-sighting the one-page cheat sheet.
+sighting the one-page cheat sheet. AGENDA gives the debrief 10 min with no breakdown; whether all of
+that fits, and how the time splits between the drill and the logistics, is ⬚. The logistics in §7.4
+must be read out either way, because `slides/week07.md` asks for them in this session.
 
 ## 6. Common misconceptions to re-test
 
@@ -263,10 +273,11 @@ via the CTF Form / Classroom.
 ### 7.3 What today's mock does *not* cover — say this explicitly
 
 `mock-ctf.md` promises the "exact format of Week 9", and the six challenges do map one-to-one onto
-Week 9's first six. Four differences remain, and students should hear all four today:
+Week 9's first six. Five differences remain, and students should hear all five today:
 
 | | Mock CTF (today) | Week 9 |
 |---|---|---|
+| Time | ~150 min of challenges — about 75 min in class, the rest at home | one sitting: 0:00–0:10 rules + target check, 0:10–2:30 solve (AGENDA, *Week 9*) |
 | Challenges | 6 | **7** — the extra one is an ECB-oracle challenge (10 pts) drawn from Week 3, with **no counterpart in the mock** |
 | Targets and flags | Local Docker on your own machine; public `…_demo` flags | Instances you spawn yourself in the hosted CTFd; a per-student flag from your own instance for all 7 challenges |
 | Working | individual **or pairs** | individual |
@@ -333,10 +344,10 @@ the course mark, course specification §4).
 | Risk | Mitigation |
 |---|---|
 | **Host port 8080 is a three-way clash.** `labs/week04-injection`, `labs/week05-xss-client-side` and `labs/week06-authn-authz` all publish `8080:5000`, and the mock CTF needs all three. A student who runs `docker compose up` in a second lab folder without stopping the first gets a bind failure | Run one target at a time — the six challenges are independent, so #1/#2 (W4), then #3 (W5), then #4/#5 (W6) — or override the published port in the second and third compose files. Note that macOS AirPlay squats on port **5000**, which here is the *container-side* port and therefore not the cause of this clash |
-| **Four `pip install` runs on the room network.** Each compose file installs at container start: `pycryptodome argon2-cffi` (W3), `flask` (W4), `flask` (W5), `flask pyjwt` (W6). In a teaching week that is one round-trip; today it is four per student, and a weak network takes down the whole mock CTF rather than one task | Pre-pull `python:3.12-slim` and bring all four targets up once the day before; have students start their containers during the 1:45–2:00 break, not at 2:00; keep the offline image copy (`docker save` / `docker load`) ready. Students who completed Weeks 3–6 on the same machine already have the layers cached |
+| **Four `pip install` runs on the room network.** Each compose file installs at container start: `pycryptodome argon2-cffi` (W3), `flask` (W4), `flask` (W5), `flask pyjwt` (W6). In a teaching week that is one round-trip; today it is four per student, and a weak network takes down the whole mock CTF rather than one task | Pre-pull `python:3.12-slim` and bring all four targets up once the day before; keep the offline image copy (`docker save` / `docker load`) ready. Students who completed Weeks 3–6 on the same machine already have the layers cached. There is no break before the mock any more, so when students start their containers is ⬚ — no source says, and start-up that waits for 1:05 comes out of the 75 in-class minutes |
 | **Challenge 6 has an uninstalled prerequisite.** Cracking the hash needs `hashcat` or `john` plus the `rockyou.txt` wordlist (worksheet 3 prerequisites); the Week 3 compose file installs neither, so the challenge can silently be un-completable | Verify the cracker and wordlist on a representative machine before class. A student without them should do the challenge by reasoning — state why unsalted MD5 falls to a wordlist (CWE-916/327) and what argon2id changes — which is also what the Week 9 partial-credit column rewards. Remember to strip the comment lines from `hashes.txt` first |
 | **Challenges 4 and 5 need host-side `pyjwt`.** `pip install … pyjwt` inside the Week 6 container does not help the forging snippets, which run `python3` with `import jwt` on the *host* (worksheet 6 prerequisites) | Have students install `pyjwt` on the host before the session; failing that, pair them for the JWT challenges and require them to write the forged-token reasoning themselves |
-| **The Jeopardy board does not exist until someone makes it.** Nothing ships in the repo; if it is not prepared, the 75-minute middle block has no content | Build the 6 × 5 board plus the Final Jeopardy wager beforehand from the item banks in `instructor/`. Fallback if it is unprepared: run the "Map of the half" cold-call recap from `slides/week07.md` and extend the mock-CTF block |
+| **The Jeopardy board does not exist until someone makes it.** Nothing ships in the repo; if it is not prepared, the 35-min Jeopardy block has no content | Build the 6 × 5 board plus the Final Jeopardy wager beforehand from the item banks in `instructor/`. Fallback if it is unprepared: run the "Map of the half" cold-call recap from `slides/week07.md` and extend the mock-CTF block |
 | **The CTFd scoreboard may not be up.** AGENDA.md hedges it as "if running", so points from Jeopardy and the mock may have nowhere to land | Tally on the whiteboard during the session and enter CTFd Awards afterwards (`instructor/CTFd-SETUP.md` §6). Nothing today is graded on those points, so a missing scoreboard costs energy, not marks |
 | **A student cannot sit the Form quiz** — the review quizzes run as a Google Form locked to the school account (SUBMISSION.md) | Print `quizzes/quiz1.md`; it carries name/ID/date fields and marks up to the same 25 |
 | **Pairs on the mock hide an individual gap.** `mock-ctf.md` allows pairs; Week 9 does not | Require each student to name, in the debrief, one challenge they could not have landed alone — and put that name on the instructor's Week 8/9 support list |
@@ -348,7 +359,9 @@ the course mark, course specification §4).
 
 - Attendance / completion: ⬚
 - Time actually taken per block (vs. plan): ⬚
+- Did Quiz 1 fit its 30 min? Did the Jeopardy board fit 35 min? ⬚
 - Where the class got stuck, and what unblocked them: ⬚
-- Mock-CTF challenges left unsolved by more than a third of the room: ⬚
+- Mock-CTF challenges still unsolved by more than a third of the room at the end of the in-class block: ⬚
+- How the mock's in-class / at-home split worked — how many students finished the remaining challenges at home: ⬚
 - Misconceptions from §6 that actually surfaced in the debrief (and any new ones): ⬚
 - Anything to change before this week runs again: ⬚

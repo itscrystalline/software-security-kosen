@@ -103,7 +103,7 @@ mkdir -p corpus && printf 'FUZ' > corpus/seed && ./fuzz corpus
 
 ## How fuzzing finds it
 
-![A coverage-guided fuzzer reaches a bug a static analyzer misses: the harness has four nested byte checks (F, U, Z, Z) and the fourth reads data[3] with no size>3 guard, so the input 'FUZ' reads one byte out of bounds. SAST reads the code and stays silent; the fuzzer mutates inputs and is rewarded for each new branch reached, climbing random -> F -> FU -> FUZ until the unguarded read crashes under AddressSanitizer, which writes a reproducer file. SAST and fuzzing are complements, not substitutes.](img/fuzzing-finds-it.svg)
+![A coverage-guided fuzzer reaches a bug a static analyzer misses: the harness has four nested byte checks (F, U, Z, Z) and the fourth reads byte 3 with no size>3 guard, so the input 'FUZ' reads one byte out of bounds. SAST reads the code and stays silent; the fuzzer mutates inputs and is rewarded for each new branch reached, climbing random -> F -> FU -> FUZ until the unguarded read crashes under AddressSanitizer, which writes a reproducer file. SAST and fuzzing are complements, not substitutes.](img/fuzzing-finds-it.svg)
 
 <!-- The static companion to the fuzz-verdict sim, and the answer to 'why fuzz if we already ran SAST?' Walk it: SAST can't know the input will ever be exactly FUZ, so it stays silent (blue); the fuzzer doesn't brute-force randomly — coverage feedback rewards each new gate passed, so it climbs to FUZ and the unguarded data[3] read faults under ASan (orange). Land on: static reads, fuzzing runs — complements. ~4 min. -->
 
@@ -146,11 +146,11 @@ triage-drill
 
 ## Tools you'll meet
 
-- **Trivy** — the SCA scanner *you'll actually run this lab* (dependency scan today; image + IaC scanning return in W12/13)
+- **Trivy** — the SCA scanner this lab uses (optional bonus Task 5, a dependency scan; image + IaC scanning return in W12/13)
 - **SonarQube**, **GitHub Advanced Security (GHAS)** — quality-gate/SAST-in-the-repo tools you'll see in industry/internships, not used in this lab
 - Address **technical debt** early — cheaper than re-work later
 
-<!-- Trivy is the one they'll type today (Task 5, scanning the NoteVault target) — say so explicitly so "tools you'll meet" doesn't read as "tools this lab uses." SonarQube/GHAS are real-world awareness. Connect "technical debt" to the cost curve from the recap. ~3 min. -->
+<!-- Trivy is the one they can type this week (optional bonus Task 5, scanning the NoteVault target) — say so explicitly so "tools you'll meet" doesn't read as "tools this lab uses." SonarQube/GHAS are real-world awareness. Connect "technical debt" to the cost curve from the recap. ~3 min. -->
 
 ---
 
@@ -184,15 +184,15 @@ docker run --rm -v "$PWD/vulnerable-repo:/repo" zricethezav/gitleaks:latest \
 
 > 📋 **Worksheet 2** — `labs/week02-sdlc-tooling/worksheet.md` (Part 3) · **kickoff:** `bash scan.sh` (Semgrep ×2 rulesets + Gitleaks `--no-git` on `./vulnerable-repo`)
 
-- A findings **triage table**: tool, CWE, severity, TP/FP, fix idea (3 TP + 1 FP, justified)
+- A findings **triage table**: tool, CWE, severity, TP/FP, fix idea (a TP/FP call + one-line reason per finding)
 - 1 fuzzing crash with a one-line root cause
-- Trivy SCA scan of the **NoteVault** project target
-- A security **CI gate** built from Week 15's `security-ci.yml`
+- *Optional bonus:* Trivy SCA scan of the **NoteVault** project target
+- *Optional bonus:* a security **CI gate** built from Week 15's `security-ci.yml`
 - One **SAST blind spot** you found by hand
 - **Defend/fix: remediate all 5 planted flaws**, before/after diff — this alone is 25 of 100 rubric points
 - **+ Audit the AI** and **EiPE / Prompt Problem** (see worksheet)
 
-<!-- The graded output — six tasks, not three. The defend/fix task (25 pts, "Defense") is the single biggest score component and is easy to undersell if you only recap the triage table. Point to scan.sh. -->
+<!-- The graded output — the core tasks, plus two optional bonus tasks (together up to +5). The defend/fix task (25 pts, "Defense") is the single biggest score component and is easy to undersell if you only recap the triage table. Point to scan.sh. -->
 
 ---
 

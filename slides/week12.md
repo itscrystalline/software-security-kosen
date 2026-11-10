@@ -128,20 +128,21 @@ pip-audit                                                          # vs PyPI adv
 
 ```bash
 IMG=week12-supplychain:lab
+docker run -d --rm --name reg -p 5500:5000 registry:2          # cosign signs a REGISTRY ref,
+docker tag "$IMG" localhost:5500/$IMG && docker push localhost:5500/$IMG   # not a bare local tag
 docker run --rm -v "$PWD:/src" -v /var/run/docker.sock:/var/run/docker.sock \
   aquasec/trivy:latest image --format cyclonedx \
-  --output /src/sbom.cdx.json "$IMG"                          # SBOM
-docker run --rm -e COSIGN_EXPERIMENTAL=1 \
-  -v /var/run/docker.sock:/var/run/docker.sock \
-  gcr.io/projectsigstore/cosign:latest sign --yes "$IMG"       # sign (OIDC)
-docker run --rm -e COSIGN_EXPERIMENTAL=1 \
-  -v /var/run/docker.sock:/var/run/docker.sock \
+  --output /src/sbom.cdx.json "$IMG"                          # SBOM (reads the local image fine)
+docker run --rm -it -e COSIGN_EXPERIMENTAL=1 --network host \
+  gcr.io/projectsigstore/cosign:latest sign --yes localhost:5500/$IMG   # sign (OIDC)
+docker run --rm -e COSIGN_EXPERIMENTAL=1 --network host \
   gcr.io/projectsigstore/cosign:latest verify \
   --certificate-identity-regexp ".*" \
-  --certificate-oidc-issuer-regexp ".*" "$IMG"                 # verify
+  --certificate-oidc-issuer-regexp ".*" localhost:5500/$IMG            # verify
 ```
 
 - Unsigned/tampered image → verification fails
+- **`cosign sign`/`verify` need a registry reference** — mounting the docker socket only lets *trivy* read the local image; cosign has nowhere to attach a signature until the image is pushed somewhere, so `sign.sh` starts a throwaway local registry first
 - **Every step needs the docker-socket mount** (trivy has to reach the local image, not just a local dir) — the SBOM step is a common copy-paste failure if it's dropped
 - **`cosign verify` needs the two `--certificate-*-regexp` flags** in keyless mode — without them it errors, it doesn't just "fail closed"
 - Keyless signing is backed by **Fulcio** (short-lived cert authority) + **Rekor** (public transparency log) — no long-lived private key sitting on disk to leak (**CWE-321**)

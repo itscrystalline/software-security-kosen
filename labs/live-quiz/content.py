@@ -198,8 +198,12 @@ def _load_courses() -> list[dict]:
     deployment: with no $COURSES set the platform behaves exactly as before,
     serving CONTENT_ROOT under one course.
 
-    $COURSES is a JSON list of {slug, title, root, arena_url?}. `root` is the
-    directory holding the weekNN-* dirs (i.e. a course repo's `labs/`).
+    $COURSES is a JSON list of {slug, title, root, arena_url?, late_pct_per_day?}.
+    `root` is the directory holding the weekNN-* dirs (i.e. a course repo's `labs/`).
+    `late_pct_per_day` (whole percent, 0-100) is what each started day late costs
+    (KOSEN: 10). It is applied only to assignments given a late window (`late_days`),
+    and only to work out the penalty; absent or 0 leaves the penalty to the teacher.
+    See submission.py late_pct_per_day().
     """
     raw = os.environ.get("COURSES", "").strip()
     if not raw:
@@ -209,6 +213,7 @@ def _load_courses() -> list[dict]:
             "root": CONTENT_ROOT,
             "arena_url": os.environ.get("ARENA_URL", "").strip() or None,
             "unit": "week",
+            "late_pct_per_day": 0,
             "modules": [],
             "unit_label": "Week",
         }]
@@ -229,9 +234,14 @@ def _load_courses() -> list[dict]:
         unit = str(c.get("unit") or "week")
         if not UNIT_NAME_RE.match(unit):
             raise ValueError(f"COURSES: {slug!r} has bad unit {unit!r}")
+        late = c.get("late_pct_per_day", 0)
+        # A typo here silently changes every student's mark, so refuse it at startup.
+        if isinstance(late, bool) or not isinstance(late, int) or not 0 <= late <= 100:
+            raise ValueError(f"COURSES: {slug!r} late_pct_per_day must be a whole number"
+                             f" 0-100, got {late!r}")
         out.append({"slug": slug, "title": str(c.get("title") or slug),
                     "root": root, "arena_url": (c.get("arena_url") or None),
-                    "unit": unit,
+                    "unit": unit, "late_pct_per_day": late,
                     "modules": _clean_modules(slug, c.get("modules")),
             # Which unit the cohort is on right now, as a `number` (not an index):
             # optional, and absent means "say nothing", which is what every course

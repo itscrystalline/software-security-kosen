@@ -35,9 +35,9 @@
     { line: "ENV AWS_SECRET_ACCESS_KEY=AKIAEXAMPLEdeadbeefdeadbeef", name: "AWS_SECRET_ACCESS_KEY" }
   ];
   var COPY_BAD = ["COPY . ."];
-  var COPY_FIX = ["COPY requirements.txt .", "COPY app.py ."];
+  var COPY_FIX = ["COPY requirements-hardened.txt .", "COPY app.py ."];
   var PIP_BAD = ["RUN pip install -r requirements.txt"];
-  var PIP_FIX = ["RUN python -m venv /venv \\", "    && /venv/bin/pip install --no-cache-dir -r requirements.txt"];
+  var PIP_FIX = ["RUN python -m venv /venv \\", "    && /venv/bin/pip install --no-cache-dir --require-hashes -r requirements-hardened.txt"];
   var CHMOD_BAD = "RUN chmod -R 777 /app";
   var USER_FIX = "USER 65532:65532";
 
@@ -211,10 +211,11 @@
       verdictEl.className = "verdict ok";
       verdictEl.textContent = "0 findings, and all six planted defects addressed";
       explainEl.textContent = "This is a one-stage, scanner-sized fragment, not the whole Dockerfile.hardened: the real file "
-        + "also builds the venv in its own stage and copies it into a distroless runtime. One honest caveat on row 6: "
-        + "requirements.txt still says Flask>=3.1.3 — a minimum, not a pin — so the install is only truly reproducible once "
-        + "every version is fixed with == (better, with hashes). scan.sh scores Dockerfile.hardened 0; Task 4 asks you to "
-        + "prove it with the before/after count — 4 → 0 — plus one sentence per fix." + lowNote;
+        + "also builds the venv in its own stage and copies it into a distroless runtime. Row 6 now really is pinned: it "
+        + "installs from requirements-hardened.txt (a hash-pinned lockfile, not the open-ended requirements.txt) with "
+        + "pip install --require-hashes, so a tampered or substituted package fails the build instead of landing in the "
+        + "image. scan.sh scores Dockerfile.hardened 0; Task 4 asks you to prove it with the before/after count — 4 → 0 "
+        + "— plus one sentence per fix." + lowNote;
     }
   }
 

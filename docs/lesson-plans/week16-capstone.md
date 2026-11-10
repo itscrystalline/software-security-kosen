@@ -12,9 +12,6 @@
 | **Standards** | `worksheet.md` header: "All prior weeks + OWASP Top 10 (2025) — https://owasp.org/Top10/2025/ ; CWE mapping required throughout". Week 16 introduces no ids of its own |
 | **CLOs addressed** | **CLO1** model · **CLO3** remediate · **CLO5** evaluate & communicate (course specification §6, row 16) |
 
-> **KOSEN-KMITL 02005094 runs a 150-min class (subject sheet, Oct 2026).** The timings below were
-> written for a longer block; the 150-min agenda is in [AGENDA.md](../../AGENDA.md).
-
 ---
 
 ## 1. Session objectives
@@ -77,82 +74,73 @@ Plus, from `README.md`: **the project runnable** (work-in-progress), and **a 10-
 
 | Artefact | Produced in | Source |
 |---|---|---|
-| A written **punch-list** of gaps, with an owner per item | WIP review block | `slides/week16.md` speaker note: "Peer feedback in writing → the presenting team gets a punch-list. This is the main value of the session." |
-| **Peer scores** — 7 criteria × 1–5 | WIP review block | `worksheet.md` §3C |
-| A **ticked §3A checklist** showing which of the six deliverables are real | WIP review block | `worksheet.md` §3A |
-| A **scrimmage retro**: what slowed us down, and who owns what in Week 19 | End of the CTF block | `scrimmage.md`, *After the scrimmage*; `worksheet.md` Part 4 Q3 |
+| A written **punch-list** of gaps, with an owner per item | WIP demo block | `slides/week16.md` speaker note: "Peer feedback in writing → the presenting team gets a punch-list. This is the main value of the session." |
+| **Peer scores** — 7 criteria × 1–5 | WIP demo block | `worksheet.md` §3C |
+| A **ticked §3A checklist** showing which of the six deliverables are real | WIP demo block | `worksheet.md` §3A |
+| A **scrimmage retro**: what slowed us down, and who owns what in Week 19 | After the scrimmage — placement ⬚ (§4) | `scrimmage.md`, *After the scrimmage*; `worksheet.md` Part 4 Q3 |
 
 **Instructor, before class.** Bring every scrimmage target up once on a representative machine the
 day before (see §8 — three of the nine are not `docker compose up`). Pre-pull `python:3.12-slim`
-and `aquasec/trivy`. Decide the pod split and the rotation order (§4.2) from the actual team count.
+and `aquasec/trivy`. Decide the team pairings for the demo stations (§4.1) from the actual team count.
 Confirm whether the CTFd scoreboard is running — `AGENDA.md` hedges it as "if running", while
 `scrimmage.md` promises a live leaderboard.
 
-## 4. Studio timetable — 300 min
+## 4. Studio timetable — 150 min
 
-The four block boundaries below are `AGENDA.md`'s (*Week 16 — Capstone Studio (300 min)*) and are
-fixed. Everything finer is derived, and each derivation names its arithmetic.
+The three block boundaries below are `AGENDA.md`'s (*Week 16 — Capstone Studio (150 min)*) and are
+fixed. `AGENDA.md` gives no finer breakdown, and none is derived here: where a block would need one,
+it is marked ⬚.
 
 | Time | Block | What happens | Source |
 |---|---|---|---|
-| 0:00–0:10 | **Studio stand-up** | Every team, standing, 60 seconds or less: what is demo-ready, what is broken, what you want from the room today. Instructor records the "broken" column — it is the triage list for §7 | Derived: taken *out of* the 0:00–2:00 block, leaving 110 min |
-| 0:10–1:55 | **WIP review slots** | 7 × 15 min, run in parallel pods (§4.2 Variant B; single strand under Variant A). Each slot runs the `worksheet.md` §3B clock; peer team scores §3C live | Derived: 110 min ÷ 15 min per team (`worksheet.md` §3B) = 7 slots + 5 min slack |
-| 1:55–2:00 | **Punch-list handover** | Reviewing teams hand the presenting team the written punch-list; instructor collects the §3A checklists | Derived from the same block |
-| 2:00–2:15 | **Break** | | `AGENDA.md` |
-| 2:15–2:25 | **Scrimmage rules + target check** | Read out the submit format; every team proves at least one target is up before the clock starts | Derived, mirroring `AGENDA.md`'s Week 9 CTF line ("0:00–0:10 rules + target check") |
-| 2:25–4:30 | **Practice CTF tournament** | The `scrimmage.md` board, cross-team, live leaderboard, first-blood bonus per challenge | Derived: the remainder of `AGENDA.md`'s 2:15–4:45 scrimmage block, which `scrimmage.md` budgets at "~150 min" |
-| 4:30–4:45 | **Scrimmage retro** | "What slowed you down? Who owns what in Week 19?" | `scrimmage.md`, *After the scrimmage* |
-| 4:45–5:00 | **Feedback + finalise the checklist** | Each team states one §3A item it will close before Week 19 and who owns it; instructor confirms the Week 17/18/19 sequence | `AGENDA.md` |
+| 0:00–1:00 | **WIP demos + peer review — paired stations** | Each team is paired with one other team (§4.1). It gives its 10-min demo + 5-min Q&A, on the `worksheet.md` §3B clock, to its partner team; then they swap. The partner team scores §3C live and writes the §5.2 punch-list. The instructor circulates (§4.2). One swap takes 30 min; how the rest of the 60-min block is used: ⬚ | `AGENDA.md`; `worksheet.md` §3B |
+| 1:00–2:15 | **Practice CTF scrimmage** | The `scrimmage.md` board, cross-team, live leaderboard, first-blood bonus per challenge. Ungraded; it stays open online after class. The rules + target check (§6.1) open the block; their minutes: ⬚. Whether the retro (§6.3) closes this block or runs in the feedback block, and for how long: ⬚ | `AGENDA.md`; `scrimmage.md` ("about 75 min in class, and the scrimmage stays open online afterwards" — this block exactly) |
+| 2:15–2:30 | **Feedback + finalise the checklist** | Each team states one §3A item it will close before Week 19 and who owns it; instructor confirms the Week 17/18/19 sequence | `AGENDA.md` |
 
-> `worksheet.md`'s title says "(4 hrs)" while `AGENDA.md` budgets 300 min. Plan to `AGENDA.md`; the
-> worksheet's own parts are homework-completable (see §6).
+> Worksheet 16's Part 3 is the demo block itself. Its other parts have no slot of their own —
+> `AGENDA.md`'s per-week table lists Week 16's homework as "project" — so plan them as completable
+> outside class (§8).
 
-### 4.1 Why the demos must run in parallel
+### 4.1 Why the demos run as paired stations
 
 Straight arithmetic, all of it repo-sourced:
 
-- `AGENDA.md` gives the demo block **120 min**; `worksheet.md` §3B gives **15 min per team**
-  (10 demo + 5 Q&A) → **8 slots**, and 7 once the stand-up is taken out.
-- `AGENDA.md` puts the cohort at **N≈80–120**; `project/README.md` and `syllabus.md` §*Teams &
-  Houses* put project teams at **2–3** → on the order of **27–60 teams**.
+- `AGENDA.md` gives the demo block **60 min**; `worksheet.md` §3B gives **15 min per team**
+  (10 demo + 5 Q&A) → a single plenary strand seats **4 teams**.
+- `slides/week19.md`'s speaker note puts the cohort at "N≈80–120 students in teams of 2–3", and
+  `project/README.md` and `syllabus.md` §*Teams & Houses* put project teams at **2–3** → on the
+  order of **27–60 teams**.
 - Actual cohort size and team count for this cohort: ⬚.
 
-Unless the team count for this cohort is ≤ 7, a single plenary strand cannot seat everyone. Two
-variants:
+Serial demos cannot seat that cohort, so `AGENDA.md` runs the block as **paired stations**: every
+pair works at the same time, one team presenting while the other reviews, and then they swap. One
+swap takes 2 × 15 = 30 min whatever the team count. What limits the format is room for the stations
+and the instructor's reach (§4.2), not the clock.
 
-- **Variant A — plenary.** Use when the team count is ≤ 7. One strand, the table in §4 as written,
-  every team seen by the instructor.
-- **Variant B — parallel pods (the default at N≈80–120).** Pods = ⌈teams ÷ 7⌉, so the 27–60 teams
-  above imply **4–9 pods**; the exact pod count and teams-per-pod for this cohort are ⬚. Each pod
-  runs its own 15-minute slots on the §3B clock, in a corner of the room or a breakout space.
-  Within a pod, the non-presenting teams are the peer reviewers. The instructor rotates (§4.2).
+- Pairs are drawn **within a House** where possible — Houses are the persistent mixed-ability
+  grouping project teams nest inside (`syllabus.md`, *Teams & Houses*), so the reviewers already
+  know each other, and cross-House copying is not being invited.
+- With an odd team count, one team has no partner. `AGENDA.md` does not say how that team is
+  placed: ⬚.
 
-Pods are drawn **within a House** where possible — Houses are the persistent mixed-ability grouping
-project teams nest inside (`syllabus.md`, *Teams & Houses*), so the peer reviewers already know each
-other, and cross-House copying is not being invited.
+### 4.2 Instructor circulation
 
-### 4.2 Instructor rotation
+At 27–60 teams the room runs on the order of 14–30 stations at once, so the instructor cannot sit
+through every demo. `AGENDA.md` has the instructor circulate and sets no rotation order or slot
+times; none is set here (⬚).
 
-The instructor cannot sit through every slot in Variant B. Rotate on the §3B clock, one whole
-15-minute slot per pod, and make the rotation **visible** — teams should know which slot the
-instructor will be in theirs, because that is the slot in which they ask their hardest question.
+- **At each station visited**, ask one unscripted follow-up — the `project/README.md` deliverable 6
+  style: *"why this fix and not X?"* This is the same viva spot-check the Week 19 Q&A runs on
+  flagged teams.
+- **Visit first** the teams the triage puts at Amber or Red (§7). The instructor assigns tiers while
+  circulating, from the §3A checklist each station is ticking.
+- **Cover the rest** from their written punch-lists, which go to the presenting teams (§5.2), and
+  the §3A checklists, which the instructor collects by the end of the block (1:00).
 
-| Rotation | Time | Pod visited | Instructor's job in the slot |
-|---|---|---|---|
-| R1 | 0:10–0:25 | Pod 1 | Sit the full slot. Ask one unscripted follow-up — the `project/README.md` deliverable 6 style: *"why this fix and not X?"* This is the same live-viva spirit the Week 19 demo is graded under |
-| R2 | 0:25–0:40 | Pod 2 | As R1 |
-| R3 | 0:40–0:55 | Pod ⬚ | As R1 |
-| R4 | 0:55–1:10 | ⬚ | As R1 |
-| R5 | 1:10–1:25 | ⬚ | As R1 |
-| R6 | 1:25–1:40 | ⬚ | As R1 |
-| R7 | 1:40–1:55 | Triage sweep | Do not sit a slot. Walk the §7 triage list from the stand-up: the teams that said "broken" |
-
-Fill the pod column from the actual pod count; with more pods than rotations, prioritise the teams
-that reported a broken deliverable at stand-up, and cover the rest from their written punch-lists.
-
-**Rotation discipline.** Pods keep running while the instructor is elsewhere — the peer review is
-the primary mechanism, not a filler. Leave each pod a printed §3C rubric and a timer instruction:
-slots start on the quarter-hour whether or not the previous team finished.
+**Station discipline.** Stations keep running while the instructor is elsewhere — the peer review is
+the primary mechanism, not a filler. Both teams at a station present and both review, so leave each
+station two printed §3C rubrics, two §5.2 punch-list sheets and one timer rule: the teams swap when
+the first demo's 15 minutes are up, whether or not it finished.
 
 ## 5. The work-in-progress review
 
@@ -187,7 +175,7 @@ failure visible.
 
 `slides/week16.md` is explicit that peer feedback goes to the presenting team **in writing, as a
 punch-list**, and calls it the main value of the session. One sheet per presenting team, filled by
-the reviewing team during the slot and handed over at 1:55:
+the partner team during the demo and handed over by the end of the demo block (1:00):
 
 ```
 PUNCH-LIST — team: ______________  reviewed by: ______________  date: ______
@@ -232,7 +220,8 @@ The presenting team's own §3A checklist, the punch-list and the peer scores are
 ### 6.1 The board (`scrimmage.md`) — and how each target actually starts
 
 `scrimmage.md` says "Challenges are drawn from the term's lab targets (`docker compose up` each)".
-That is true of six of the nine. The last column is the correction; brief it at 2:15–2:25.
+That is true of six of the nine. The last column is the correction; brief it as the scrimmage opens
+(1:00).
 
 | Pts | Challenge | Target | Hint (as printed) | How the target actually starts |
 |---:|---|---|---|---|
@@ -264,7 +253,10 @@ boss are where teams that have divided labour badly will stall.
   Awards afterwards (`instructor/CTFd-SETUP.md` §6) — the points feed the Houses engagement layer,
   which `syllabus.md` states is not graded.
 
-### 6.3 The retro (4:30–4:45) — three questions
+### 6.3 The retro — three questions
+
+`scrimmage.md` puts the retro "after the scrimmage", but the scrimmage stays open online after class.
+Whether it closes the 1:00–2:15 block or runs in the 2:15–2:30 feedback block, and for how long: ⬚.
 
 1. `scrimmage.md`: **what slowed you down?** Force a concrete answer — a target that would not
    start, a technique nobody had practised, or duplicated effort.
@@ -279,21 +271,21 @@ separately.
 
 ## 7. Support for teams that are behind
 
-"Behind" has a repo definition today — the `project/README.md` milestone table. Triage at the
-stand-up (0:00–0:10) and assign a tier; the tier decides what the team spends the 120-minute block
-on.
+"Behind" has a repo definition today — the `project/README.md` milestone table. Triage while
+circulating in the demo block (0:00–1:00, §4.2) and assign a tier; the tier decides what the team
+does with the 60-minute demo block.
 
 | Tier | Definition (`project/README.md` milestones) | What they do today |
 |---|---|---|
-| **Green** | All six §3A deliverables present; demo rehearsed | Normal slot. Push them: ask the unscripted follow-up, and set the punch-list at polish level (severity accuracy, Q&A handling) |
-| **Amber** | Threat model (W7) and vuln report draft (W11) exist; the W14 group — remediation, SBOM, signed artifact — is partial or missing | Demo the part that works, then **spend the rest of their own slot building**, in the room, with the peer team watching. SBOM and signing are the two most recoverable in a session: `docker run --rm -v "$PWD:/src" aquasec/trivy image --format cyclonedx -o /src/sbom.json myapp:lab` then `cosign sign` / `cosign verify` (`labs/week12-supply-chain/README.md`), and `labs/week12-supply-chain/sign.sh` |
-| **Red** | No working exploit against their own app, or the app will not run | Drop the demo for today. Reset them onto the default target: `cd project/starter-app && export TEAM_ID=<your-team-name> && docker compose up`. Point them at `project/starter-app/README.md`'s *Suggested attack surface* — login, register, note, search, admin and export endpoints; the session cookie; `requirements.txt`; the `Dockerfile` — with seeded logins `alice / alicepw` and `admin / admin123`. One reproducible finding with a CWE/OWASP mapping by 1:55 is the target |
+| **Green** | All six §3A deliverables present; demo rehearsed | Normal demo. Push them: ask the unscripted follow-up, and set the punch-list at polish level (severity accuracy, Q&A handling) |
+| **Amber** | Threat model (W7) and vuln report draft (W11) exist; the W14 group — remediation, SBOM, signed artifact — is partial or missing | Demo the part that works, then **spend the rest of their own 15 minutes building**, in the room, with the partner team watching. SBOM and signing are the two most recoverable in a session: `docker run --rm -v "$PWD:/src" aquasec/trivy image --format cyclonedx -o /src/sbom.json myapp:lab` then `cosign sign` / `cosign verify` (`labs/week12-supply-chain/README.md`), and `labs/week12-supply-chain/sign.sh` |
+| **Red** | No working exploit against their own app, or the app will not run | Drop the demo for today. Reset them onto the default target: `cd project/starter-app && export TEAM_ID=<your-team-name> && docker compose up`. Point them at `project/starter-app/README.md`'s *Suggested attack surface* — login, register, note, search, admin and export endpoints; the session cookie; `requirements.txt`; the `Dockerfile` — with seeded logins `alice / alicepw` and `admin / admin123`. One reproducible finding with a CWE/OWASP mapping by the end of the demo block (1:00) is the target |
 
 Three further supports, all cheap:
 
 - **The scrimmage is the recovery path.** A Red team that lands the boss challenge — "chain two bugs
   on the NoteVault starter", the same codebase as their project — has just produced the PoC their
-  vulnerability report was missing. Say this explicitly at 2:15.
+  vulnerability report was missing. Say this explicitly as the scrimmage opens (1:00).
 - **The pipeline is the smallest deliverable.** `labs/week15-devsecops-pipeline/security-ci.yml` is
   a working starting point for §3A deliverable 6; a team with nothing there can have a failing-closed
   gate before the end of the day.
@@ -301,7 +293,7 @@ Three further supports, all cheap:
   punctuality; the Week 19 demo is the graded event. Tell Amber and Red teams that, and then hold
   them to the punch-list.
 
-**Peer-contribution fairness.** If the stand-up or the rotation exposes a team where one member is
+**Peer-contribution fairness.** If a demo or the instructor's circulation exposes a team where one member is
 carrying everything, note it now — `project/README.md` scales each member's mark by the private
 peer-contribution rating (typically ×0.8–1.1), and an unjustified low score is discussed before it
 is applied. Raising it in Week 16 gives the team five weeks to fix the split; raising it at the
@@ -352,17 +344,17 @@ retrieval quizzes belong to teaching weeks.
 
 | Risk | Mitigation |
 |---|---|
-| **Host port 8080 is a five-way clash — worse than in Weeks 7 and 9.** `labs/week04-injection`, `labs/week05-xss-client-side` and `labs/week06-authn-authz` publish `8080:5000`, `labs/week10-api-security` publishes `8080:5000` (plus `8081:5001`), and `project/starter-app` publishes `8080:8080`. The scrimmage needs four of those *and* NoteVault for the boss challenge — and NoteVault may still be bound from a team's own demo in the morning block | Brief it at 2:15–2:25: run **one 8080 target at a time**, `docker compose down` before the next, or override the **left** side of the `ports` mapping. The nine challenges are independent, so a sequence works: week04 → week05 → week06 → week10 → NoteVault. Note that macOS AirPlay squats on **5000**, which here is the *container-side* port and is therefore not the cause of this clash. Have teams `docker compose down` their demo stack at the break |
-| **Three of the nine challenges have no `docker compose up`**, contradicting `scrimmage.md`'s "(`docker compose up` each)". A team following the file literally loses 45 of the 120 points to a missing command | Correct it on the board at 2:15–2:25 using §6.1: week11 is `make`; week12 is `bash sca_scan.sh`; week13 is `bash scan.sh` |
+| **Host port 8080 is a five-way clash — worse than in Weeks 7 and 9.** `labs/week04-injection`, `labs/week05-xss-client-side` and `labs/week06-authn-authz` publish `8080:5000`, `labs/week10-api-security` publishes `8080:5000` (plus `8081:5001`), and `project/starter-app` publishes `8080:8080`. The scrimmage needs four of those *and* NoteVault for the boss challenge — and NoteVault may still be bound from a team's own demo in the 0:00–1:00 block | Brief it as the scrimmage opens (1:00): run **one 8080 target at a time**, `docker compose down` before the next, or override the **left** side of the `ports` mapping. The nine challenges are independent, so a sequence works: week04 → week05 → week06 → week10 → NoteVault. Note that macOS AirPlay squats on **5000**, which here is the *container-side* port and is therefore not the cause of this clash. Have teams `docker compose down` their demo stack when the demo block ends |
+| **Three of the nine challenges have no `docker compose up`**, contradicting `scrimmage.md`'s "(`docker compose up` each)". A team following the file literally loses 45 of the 120 points to a missing command | Correct it on the board as the scrimmage opens (1:00), using §6.1: week11 is `make`; week12 is `bash sca_scan.sh`; week13 is `bash scan.sh` |
 | **Apple-Silicon platform mismatch kills the 20-point ret2win challenge.** `scrimmage.md`'s hint is "offset 72 → `&win`"; on an arm64 host the build is aarch64 and that offset and the addresses do not apply. The `Makefile` also warns that `-z execstack` / `-no-pie` are GNU ld/Linux flags and the *link* step may fail on macOS | Run the build forced to amd64 under Rosetta (`docker run --platform linux/amd64 …`), as already documented in [`week11-memory-safety-exploitation.md`](week11-memory-safety-exploitation.md) §8, or use `labs/toolbox`. A team that cannot build should be told to skip it rather than burn 40 minutes — it is 20 of 120 ungraded points |
-| **Trivy needs to pull an image and download a vulnerability database.** `trivy fs` (week12) and `trivy config` (week13) run from `aquasec/trivy`; a room of teams pulling the image and the DB at 2:25 on a weak network stalls two challenges at once | Pre-pull `aquasec/trivy` before the session and warm the DB cache on a representative machine; keep an offline image copy (`docker save` / `docker load`). `trivy config` is the more resilient of the two — it checks IaC/Dockerfile misconfiguration and is less DB-hungry than the CVE scan |
+| **Trivy needs to pull an image and download a vulnerability database.** `trivy fs` (week12) and `trivy config` (week13) run from `aquasec/trivy`; a room of teams pulling the image and the DB at 1:00 on a weak network stalls two challenges at once | Pre-pull `aquasec/trivy` before the session and warm the DB cache on a representative machine; keep an offline image copy (`docker save` / `docker load`). `trivy config` is the more resilient of the two — it checks IaC/Dockerfile misconfiguration and is less DB-hungry than the CVE scan |
 | **Cosign is not installed, or keyless signing needs network + OIDC.** `project/README.md` deliverable 4 requires the release artifact signed with Cosign, and `worksheet.md` §3A deliverable 5 wants the exact verification command — an Amber team trying to close that gap in-session hits an install and an interactive browser sign-in | Check `cosign version` on a representative machine beforehand. If keyless is not workable in the room, a team may show a key-pair signature plus the verification command; what §3A actually asks for is a signature and the command a consumer runs. `labs/week12-supply-chain/sign.sh` is the reference |
 | **The CTFd leaderboard may not be up.** `AGENDA.md` hedges it as "if running" while `scrimmage.md` promises a live leaderboard and a first-blood bonus | Tally on the whiteboard during the scrimmage and enter CTFd Awards afterwards (`instructor/CTFd-SETUP.md` §6). Nothing today is graded on those points, so a missing scoreboard costs energy, not marks |
 | **Duplicate flags in a team scrimmage are not an integrity event.** Where the scrimmage targets are local lab folders, an unset `FLAG_*` silently falls back to the public `…_demo` default — so every team sees the *same* flag values. Per-student, attributable flags (random per instance, recorded by CTFd) come only from hosted CTFd instances (`ctf.zcr.ai`), not from local Docker; a per-student `.env` is no substitute, because the student owns the machine and can read it. On top of that the scrimmage is played in teams of 2–4 and is ungraded — teammates will legitimately submit each other's values | Do not escalate a duplicate today. `scrimmage.md` accepts "flag/proof", so proof is sufficient; `labs/week05-xss-client-side/docker-compose.yml` injects no `FLAG_*` at all, so the Stored XSS challenge is scored on proof by construction. Reserve `ctf_integrity_report.py` for the graded Weeks 9 and 19 (the two CTF-format assessments; Week 18 is the written final exam and issues no flags) |
-| **More teams than slots** — 120 min ÷ 15 min gives 8, and the cohort is N≈80–120 in teams of 2–3 (§4.1) | Run Variant B pods (§4.2). If even pods overflow, cut the demo to the §3B *Attack* + *Fix + verify* segments (1:30–4:30 and 6:30–9:00 — 3:00 + 2:30 = 5½ min of demo) and keep the full 5-minute Q&A only for the pod the instructor is sitting in |
-| **A team demos against something that is not theirs.** `worksheet.md`'s ethics note limits today's demos to the team's own term-project application or the provided practice-CTF targets | State the boundary at the stand-up. A demo against anything else stops there and is handled under [ETHICS.md](../../ETHICS.md) |
+| **The instructor reaches only some stations.** Paired stations seat any team count in one 30-min swap, but at ~27–60 teams (§4.1) that is on the order of 14–30 stations at once, and `AGENDA.md` gives the instructor no slot at any of them | Visit the Amber and Red teams first (§4.2, §7) and cover the rest from the written punch-lists and §3A checklists. An odd team count leaves one team without a partner; how it is placed: ⬚ |
+| **A team demos against something that is not theirs.** `worksheet.md`'s ethics note limits today's demos to the team's own term-project application or the provided practice-CTF targets | State the boundary before the demos start. A demo against anything else stops there and is handled under [ETHICS.md](../../ETHICS.md) |
 | **Peer review degenerates into praise.** Ungraded feedback between friendly teams tends to score 5s | Require a *number* on all seven §3C criteria and *three* punch-list lines with owners; a punch-list handed in with fewer than three gaps goes back to the reviewing team. The "one thing this team does better than us" line is where the praise goes |
-| **A team's own app will not run at all in the room** | They present from a recorded fallback — `worksheet.md` §3B allows "(or recorded fallback)" for the Attack segment — and spend the rest of the slot on the environment, not the slides. Log it on the §7 triage list |
+| **A team's own app will not run at all in the room** | They present from a recorded fallback — `worksheet.md` §3B allows "(or recorded fallback)" for the Attack segment — and spend the rest of their 15 minutes on the environment, not the slides. Log it on the §7 triage list |
 
 ## 11. Post-teaching reflection
 
@@ -370,7 +362,8 @@ retrieval quizzes belong to teaching weeks.
 
 - Attendance / completion: ⬚
 - Time actually taken per block (vs. plan): ⬚
+- How the paired stations worked, and what the 30 min of the demo block left after the swap went to: ⬚
 - Where the class got stuck, and what unblocked them: ⬚
-- Teams triaged Amber/Red at the stand-up, and whether they closed the gap by 1:55: ⬚
+- Teams triaged Amber/Red in the demo block, and whether they closed the gap by 1:00: ⬚
 - Scrimmage challenges left unsolved by more than a third of the teams: ⬚
 - Anything to change before this week runs again: ⬚

@@ -4,17 +4,11 @@
 |---|---|
 | **Course** | Software Security 2 (02005094, KOSEN-KMITL) |
 | **Week / date** | 12 · ⬚ |
-| **Contact time** | 150 min = 10 quiz + 15 explanation & demo + 115 supervised lab (in class: Tasks 0, 2, 3, 4; homework: Tasks 1) |
+| **Contact time** | 150 min = 10 quiz + 15 explanation & demo + 115 supervised lab (in class: Tasks 0, 2, 3, 4; homework: Task 1) |
 | **Lab folder** | `labs/week12-supply-chain` |
 | **Slides** | `slides/week12.md` |
 | **Standards** | OWASP 2025 **A03 Software Supply Chain Failures** · **A08 Software or Data Integrity Failures** · CWE-1104 (unmaintained third-party component), CWE-829 (inclusion of functionality from untrusted control sphere), CWE-1357 (reliance on insufficiently trustworthy component), CWE-1395 (dependency on vulnerable third-party component) |
 | **CLOs addressed** | **CLO4** operate security tooling across the SDLC · **CLO5** evaluate & communicate · **CLO6** evidence & ethics |
-
-> **KOSEN-KMITL 02005094 runs a 150-min class (subject sheet, Oct 2026).** §4's lecture is now
-> pre-class material (the week's slides), shown in class only as a 15-min explanation + demo; §5
-> runs only the worksheet's *in class* tasks, and the rest are homework. The tables below keep the
-> original 120 + 180-min layout as the content reference — the class-time plan is in
-> [AGENDA.md](../../AGENDA.md) and each worksheet's Part 3.
 
 ---
 
@@ -97,69 +91,86 @@ requirements file, the resolved tree or the whole image. The count is not the fi
 - **Prerequisite concept:** what a CVE identifier is, how to read a pinned version specifier, and the
   `trivy fs` run from Week 2's tooling lab.
 
-## 4. Lecture — 120 min
+## 4. Pre-class material and in-class explanation — 10 min quiz + 15 min demo
+
+**Before class (students).** The concept material is pre-class: students study `slides/week12.md`
+and answer the worksheet's **Part 2** questions from it before the class starts. The slides carry
+what the 120-min lecture used to teach:
+
+| Block | Content |
+|---|---|
+| Core concepts | The hook from the slide deck: how many lines did you write in your last project vs. how many did you ship? Your code is ~10% yours, ~90% dependencies — and that gap is the attack surface. **A03:2025 Software Supply Chain Failures**, new at the top of the list. Then the four attack vectors: typosquatting (`reqeusts` vs. `requests`), dependency confusion (public package shadows an internal name), malicious updates from a compromised maintainer, and transitive risk (deps of deps you never chose). Dependency confusion is defined carefully — it is the game |
+| Deep dive + real cases | The case table from the slides: **SolarWinds** (2020) trojanised vendor update → 18k orgs · **Log4Shell** (2021) RCE in a ubiquitous logging dependency · **event-stream** (npm) malicious dep stole crypto-wallet keys · **XZ Utils** (2024) backdoor planted in `liblzma` · **CircleCI** (2023) stolen CI tokens → customer secrets. Attacks are shifting **upstream**: registry → maintainer → CI/CD. XZ gets the most depth (the worksheet's Part 4 Q2 asks for it): a patient attacker became a trusted maintainer over years, and the lesson is that trust in maintainers is itself attackable |
+| Defences | SCA and what it produces (CVE + fixed version) — `npm audit`, `trivy fs`, OWASP dependency-check; CWE-1104 / CWE-829. Then integrity: **SBOM** (CycloneDX/SPDX) as the ingredient list, **SLSA** Build Track levels **L0–L3** (the old "1–4" numbering is v0.1 and deprecated), **A08:2025**. Keyless signing with Cosign — `trivy image --format cyclonedx` → `cosign sign` → `cosign verify`, identity-based via OIDC so there is no key to leak; an unsigned or tampered image fails. The managed option they will meet in industry: GHAS — secret scanning + push protection, CodeQL, Dependabot. The closing checklist: pin versions + lockfiles, scope internal registries, verify signatures before deploy (admission policy), store an SBOM per release, MFA on dev/CI/cloud accounts, automate SCA in CI (Week 15) |
+
+**In class**
 
 | Time | Block | Content | Method |
 |---|---|---|---|
-| 0:00–0:10 | Weekly quiz + recap | ~10-min retrieval quiz on Week 11 (memory safety & exploitation — "Fuzzing Race → Pwn the Binary"); bridge — last week the class fuzzed and pwned a binary it built from source in the room, this week the target is code nobody in the room has read; today's agenda | Individual quiz, lowest 1–2 dropped |
-| 0:10–0:55 | Core concepts | The hook from the slide deck: how many lines did you write in your last project vs. how many did you ship? Your code is ~10% yours, ~90% dependencies — and that gap is the attack surface. **A03:2025 Software Supply Chain Failures**, new at the top of the list. Then the four attack vectors: typosquatting (`reqeusts` vs. `requests`), dependency confusion (public package shadows an internal name), malicious updates from a compromised maintainer, and transitive risk (deps of deps you never chose). Define dependency confusion carefully — it is the game | Lecture + live `trivy fs` run on the projector |
-| 0:55–1:05 | Break | | |
-| 1:05–1:35 | Deep dive + real cases | The case table from the slides: **SolarWinds** (2020) trojanised vendor update → 18k orgs · **Log4Shell** (2021) RCE in a ubiquitous logging dependency · **event-stream** (npm) malicious dep stole crypto-wallet keys · **XZ Utils** (2024) backdoor planted in `liblzma` · **CircleCI** (2023) stolen CI tokens → customer secrets. Attacks are shifting **upstream**: registry → maintainer → CI/CD. Spend the time on XZ (the worksheet's Part 4 Q2 asks for it): a patient attacker became a trusted maintainer over years, and the lesson is that trust in maintainers is itself attackable | Lecture + short discussion: "what would have caught this?" |
-| 1:35–1:55 | Defences | SCA and what it produces (CVE + fixed version) — `npm audit`, `trivy fs`, OWASP dependency-check; CWE-1104 / CWE-829. Then integrity: **SBOM** (CycloneDX/SPDX) as the ingredient list, **SLSA** Build Track levels **L0–L3** (the old "1–4" numbering is v0.1 and deprecated), **A08:2025**. Keyless signing with Cosign — `trivy image --format cyclonedx` → `cosign sign` → `cosign verify`, identity-based via OIDC so there is no key to leak; an unsigned or tampered image fails. The managed option they will meet in industry: GHAS — secret scanning + push protection, CodeQL, Dependabot. The closing checklist: pin versions + lockfiles, scope internal registries, verify signatures before deploy (admission policy), store an SBOM per release, MFA on dev/CI/cloud accounts, automate SCA in CI (Week 15) | Lecture with the sign → verify loop demonstrated live |
-| 1:55–2:00 | Brief the game | 📦 **"Dependency Confusion Heist"** — Round 1 attack: no live registry in this lab — the resolver simulation computes "highest version wins" live for the `acme-internal-utils` example. Round 2 defend: pin + scope, SBOM, sign & verify, provenance gate. State the ethics boundary here, not in the lab: never the real PyPI/npm | Instruction |
+| 0:00–0:10 | Weekly quiz + today's goal | ~10-min retrieval quiz on Week 11 (memory safety & exploitation — "Fuzzing Race → Pwn the Binary"); bridge — last week the class fuzzed and pwned a binary it built from source in the room, this week the target is code nobody in the room has read; today's goal | Individual quiz, lowest 1–2 dropped |
+| 0:10–0:25 | Explanation + live demo | A live `trivy fs` run over `requirements.txt` — and why the scanners disagree: the count is not the finding (see the formative checkpoints; Task 1, where students meet this, is homework). Then the sign → verify loop, with an unsigned image failing verification — the guided demo `sign.sh`'s own header calls for. Brief the game — 📦 **"Dependency Confusion Heist"**: Round 1 attack — no live registry in this lab; the resolver simulation computes "highest version wins" live for the `acme-internal-utils` example. Round 2 defend: pin + scope, SBOM, sign & verify, provenance gate. State the ethics boundary here, not in the lab: never the real PyPI/npm | Live demo on the projector + instruction |
 
-**Checks for understanding during lecture**
-- After the attack-vector slide: cold-call *"your internal package is called `acme-internal-utils`. What
-  does an attacker have to publish, and what number do they have to choose?"*
-- Before the break: one-minute paper — *"you vetted your ten dependencies. How many packages are
-  actually in your build?"*
-- At the end (from the slide notes): *"the next Log4Shell drops at 2am — what artefact tells you whether
-  you are affected?"* (the SBOM).
+**Checks for understanding during the demo**
+- Briefing the game: cold-call *"your internal package is called `acme-internal-utils`. What does an
+  attacker have to publish, and what number do they have to choose?"*
+- Before the lab starts: *"you vetted your ten dependencies. How many packages are actually in your
+  build?"*
+- After the sign → verify loop (from the slide notes): *"the next Log4Shell drops at 2am — what
+  artefact tells you whether you are affected?"* (the SBOM).
 
-## 5. Laboratory — 180 min
+## 5. Supervised lab — 115 min in class + homework
 
-Target: `cd labs/week12-supply-chain` → `bash sca_scan.sh` (kickoff) → `docker build -t
-week12-supplychain:lab .` → `bash sign.sh week12-supplychain:lab`. There is no running service this
-week: `app.py` exists only so the image has something to be built, scanned and signed. Rows below use
-Worksheet 12's own task names and minute budgets.
+Target: `cd labs/week12-supply-chain` → `bash sca_scan.sh` (kickoff — this is Task 1, now homework)
+→ `docker build -t week12-supplychain:lab .` → `bash sign.sh week12-supplychain:lab`. There is no
+running service this week: `app.py` exists only so the image has something to be built, scanned and
+signed. Rows below use Worksheet 12's own task names and minute budgets.
+
+Only the worksheet's *in class* tasks run here (worksheet Part 3; [AGENDA.md](../../AGENDA.md),
+*How each worksheet is split*). The instructor circulates, checks evidence and reasoning, and runs
+2–3 **viva spot-checks** — a student reproduces and explains an exploit or fix live.
 
 | Time | Task | Student does | Evidence produced |
 |---|---|---|---|
-| 0:00–0:15 | **Task 0 — Onboarding (15 min)** | Read `requirements.txt` and list the pinned packages with their versions; note why they are intentionally outdated (each is deliberately an old release so SCA tools flag its known CVEs) | The package/version table + which OWASP/CWE this maps to |
-| 0:15–0:50 | **Task 1 — SCA scan: build the remediation worklist (35 min)** | `bash sca_scan.sh`; read the `trivy fs` table (CVE, installed vs. fixed version) and the `pip-audit` advisory IDs (GHSA-/PYSEC-); pick three findings and record CVE/advisory id, severity and the fixed version | The SCA output + a 3-row remediation table (package → current → fixed) |
-| 0:50–1:25 | **Task 2 — Dependency Confusion Heist (35 min)** | No live registry: use the `/sim/resolver-confusion` simulation (embedded in `worksheet.md`, per `dependency-confusion.md`) to watch the higher-versioned public look-alike (`==99.0.0`) beat the private one (`==1.4.0`) in merged (`--extra-index-url`) mode, then watch single-index (`--index-url`) mode block it | The simulation's verdict, merged vs. single-index, for the same version pair |
-| 1:25–1:55 | **Task 3 — SBOM + signing/verification (30 min)** | After `bash sign.sh week12-supplychain:lab`, open `sbom.cdx.json` and find Flask's entry; read the `cosign verify` PASS; negative test `cosign verify --certificate-identity-regexp '.*' --certificate-oidc-issuer-regexp '.*' python:3.9-slim` and confirm the unsigned image fails with `Error: no signatures found` | The SBOM Flask component entry + the verify PASS + the negative-test failure |
-| 1:55–2:30 | **Task 4 — Defend / fix it (35 min)** | **Pin + hashes:** run `pip install --require-hashes -r requirements.txt` against the lab's own (unhashed) `requirements.txt` and show pip's refusal — the same mechanism that would block a hash-mismatched confusion substitution. **Single trusted index:** use one `--index-url` instead of `--extra-index-url` and explain why the resolver stops shopping around (ties to Task 2's single-index verdict). **Namespace scoping:** describe reserving/namespacing the internal package name. **Provenance gate:** state how the `cosign verify` from `sign.sh` becomes a gate before a simulated deploy | The `--require-hashes` refusal output + the sim's before/after verdict + the one defence they found most effective and why |
-| 2:30–2:55 | **AI-resilient tasks (25 min)** | *Audit the AI* (critique an AI-written exploit or fix, quoting the exact wrong line), *Explain-in-Plain-English*, *Prompt Problem* | Written answers (start in class, finish as homework) |
-| 2:55–3:00 | **Micro-demo + submit (5 min)** | 2–3 rotating students give a 2–3 min "show your exploit/fix"; everyone submits | Worksheet PDF → Classroom; code → GitHub |
+| 0:25–0:40 | **Task 0 — Onboarding (15 min)** | Read `requirements.txt` and list the pinned packages with their versions; note why they are intentionally outdated (each is deliberately an old release so SCA tools flag its known CVEs) | The package/version table + which OWASP/CWE this maps to |
+| 0:40–1:15 | **Task 2 — Dependency Confusion Heist (35 min)** | No live registry: read `dependency-confusion.md`'s substitution section, then use the `/sim/resolver-confusion` simulation (embedded in `worksheet.md`) — the **"the attack"** preset shows the higher-versioned public look-alike (`==99.0.0`) beat the private one (`==1.4.0`) in merged (`--extra-index-url`) mode; the same versions in single-index (`--index-url`) mode block it; the **"win the race"** preset shows why a higher private version is "not a defense" | Screenshots of the simulation's verdict in both index modes for the same version pair + one sentence on why an attacker defeats the "keep my internal version number high" idea |
+| 1:15–1:45 | **Task 3 — SBOM + signing/verification (30 min)** | After `bash sign.sh week12-supplychain:lab`, open `sbom.cdx.json` and find Flask's entry; read the `cosign verify` PASS; negative test `cosign verify --certificate-identity-regexp '.*' --certificate-oidc-issuer-regexp '.*' python:3.9-slim` and confirm the unsigned image fails with `Error: no signatures found` | The SBOM Flask component entry + the verify PASS + the negative-test failure |
+| 1:45–2:20 | **Task 4 — Defend / fix it (35 min)** | **Pin + hashes:** run `pip install --require-hashes -r requirements.txt` against the lab's own (unhashed) `requirements.txt` and show pip's refusal — the same mechanism that would block a hash-mismatched confusion substitution. **Single trusted index:** use one `--index-url` instead of `--extra-index-url` and explain why the resolver stops shopping around (ties to Task 2's single-index verdict). **Namespace scoping:** describe reserving/namespacing the internal package name. **Provenance gate:** state how the `cosign verify` from `sign.sh` becomes a gate before a simulated deploy | The `--require-hashes` refusal output + the sim's before/after verdict + the one defence they found most effective and why |
+| 2:20–2:30 | **Slack — feedback and catch-up (10 min)** | Students who fell behind on an in-class task catch up | Instructor feedback on the evidence so far |
 
-> **Scheduling note.** Worksheet 12's Part 3 budgets total 150 min (15 + 35 + 35 + 30 + 35), which is one
-> of the light weeks [AGENDA.md](../../AGENDA.md) flags itself. The 30 minutes left over are spent by
-> giving the *AI-resilient* block 25 min rather than AGENDA's 20, and merging micro-demo and submission
-> into the closing 5. Nothing is cut.
+**Homework — submitted with the worksheet before the start of the next week's class**
+
+| Task | Student does | Evidence produced |
+|---|---|---|
+| **Task 1 — SCA scan: build the remediation worklist (35 min)** | `bash sca_scan.sh`; read the `trivy fs` table (CVE, installed vs. fixed version) and the `pip-audit` advisory IDs (GHSA-/PYSEC-); pick three findings and record CVE/advisory id, severity and the fixed version | The SCA output + a 3-row remediation table (package → current → fixed) |
+| **Part 4, *Audit the AI*, *Comprehension & Prompt*** | Reflection (mapping table, XZ Utils, SLSA self-assessment); critique an AI-written exploit or fix, quoting the exact wrong line; *Explain-in-Plain-English* and *Prompt Problem* | Written answers |
+
+Worksheet PDF → `learn.zcr.ai/submit`; code → GitHub. Due before the start of the next week's class; late work loses 10% per started day and reaches 0 after 10 days (`syllabus.md` §6).
 
 **Formative checkpoints.**
-- **The scanners disagree, loudly, and that is the lesson.** Verified on the current files
-  (2026-07-26): `sca_scan.sh`'s `trivy fs` step runs with `--severity HIGH,CRITICAL` and reports
-  **9 findings — all HIGH, 0 CRITICAL — against only Flask, Werkzeug and urllib3**. Drop the severity
-  filter and the same scan reports **26**. `pip-audit`, in the very next step, reports **31 known
-  vulnerabilities in 7 packages**. And once the image exists, step 3/3's `trivy image` adds a
-  `week12-supplychain:lab (debian 13.1)` row with **48** more, none of which come from
+- **No in-class task waits on Task 1.** Task 4 draws on Task 2's single-index verdict and on Task 3's
+  `cosign verify`, and its `--require-hashes` step runs against `requirements.txt` directly. Task 1's
+  findings feed only Part 4's mapping table, which is homework too.
+- **The scanners disagree, loudly, and that is the lesson** (Task 1, homework). Verified on the
+  current files (2026-07-26): `sca_scan.sh`'s `trivy fs` step runs with `--severity HIGH,CRITICAL`
+  and reports **9 findings — all HIGH, 0 CRITICAL — against only Flask, Werkzeug and urllib3**. Drop
+  the severity filter and the same scan reports **26**. `pip-audit`, in the very next step, reports
+  **31 known vulnerabilities in 7 packages**. And once the image exists, step 3/3's `trivy image`
+  adds a `week12-supplychain:lab (debian 13.1)` row with **48** more, none of which come from
   `requirements.txt` at all — they are the base image's OS packages. That is the script's own
-  "image scanning is a superset" claim, made concrete. Say this before Task 1's table is started, or
-  half the room will conclude one of the tools is broken.
-- **Two packages named in `requirements.txt`'s own comments behave differently.** urllib3's
+  "image scanning is a superset" claim, made concrete. Say this in the 0:10–0:25 demo, before Task 1
+  goes home, or half the class will conclude one of the tools is broken.
+- **Two packages named in `requirements.txt`'s own comments behave differently** (Task 1). urllib3's
   **CVE-2021-33503** does appear in the `trivy fs` output (HIGH, fixed in 1.26.5). Jinja2 2.11.3 is
   the release that **fixed** **CVE-2020-28493**, so neither `trivy fs` (any severity) nor `pip-audit`
   reports that CVE against it (verified 2026-07-26); `pip-audit` lists Jinja2's *later* advisories
   instead (e.g. CVE-2024-22195, fixed in 3.1.3). Until 25 Oct 2026 the file comment and this deck's
   diagram alt text named CVE-2020-28493 as if it were still open, and some students copied it into
-  their Task 1 table; the comment now says 2.11.3 fixed it. Still worth 60 seconds: "the comment is
-  not the evidence; the tool output is".
+  their Task 1 table; the comment now says 2.11.3 fixed it. Still worth 60 seconds in the demo: "the
+  comment is not the evidence; the tool output is".
 - **`pip-audit` printed only `PYSEC-` IDs**, no `GHSA-` (verified 2026-07-26), although the worksheet
   writes "GHSA-/PYSEC-". Accept either.
 - **`pip-audit` sees a package that is not in `requirements.txt`.** It flags `idna 2.10`, pulled in
-  transitively by `requests` — the concrete instance of the lecture's "transitive risk" slide. Worth
+  transitively by `requests` — the concrete instance of the slides' "transitive risk" vector. Worth
   pointing at rather than letting a student mark it as tool noise.
 - **Task 4 step 1's command does not run as printed.** Verified 2026-07-26:
   `pip install --require-hashes -r requirements.txt` against the current file stops at the first package
@@ -168,9 +179,11 @@ Worksheet 12's own task names and minute budgets.
   *is* the teaching moment — hashes have to be generated (or a lockfile committed) before the defence
   exists — but budget for it, and note that pip demands hashes for transitives too, so a hand-written
   three-line attempt will keep failing.
-- Tasks 0–1 must be finished by 0:50 or Task 2 slips into the SBOM slot. A student still fighting the
-  Trivy DB download at that point should read a classmate's output for the table and come back to their
-  own run later.
+- Task 0 must be finished by 0:40 or Task 2 slips into the SBOM slot. The Trivy DB download that
+  used to stall Task 1 in class now happens at home; in class, Task 3's `sign.sh` step 1/3 is the
+  students' one Trivy run (§8). A student whose download stalls at home can start the table from a
+  classmate's output and come back to their own run later — the submitted SCA output must still be
+  their own, identity-stamped run (worksheet *Evidence & Integrity*).
 
 ## 6. Assessment for this week
 
@@ -180,8 +193,8 @@ Worksheet 12's own task names and minute budgets.
 | Worksheet 12, Part 3 Tasks 1–3 — exploitation + evidence | SCA findings, confusion proof, SBOM/verify transcript | P1–P5, A1 | 40 of 100 |
 | Worksheet 12, Part 3 Task 4 — defence | Pinning/hashes, single index, scoping, provenance gate | P6 | 25 of 100 |
 | Worksheet 12, Part 4 (reflection) | Mapping table, XZ Utils breach analysis, SLSA self-assessment | K4, K6, P7 | 15 of 100 |
-| Weekly quiz (start of lecture) | Quiz score | K1–K3 | Part of the 10% quiz/participation component |
-| Viva spot-check / micro-demo | Live reproduction and explanation | P1–P6, A2 | Pass/flag for follow-up |
+| Weekly quiz (start of class) | Quiz score | K1–K3 | Part of the 10% quiz/participation component |
+| Viva spot-check (during the lab) | Live reproduction and explanation | P1–P6, A2 | Pass/flag for follow-up |
 | Per-student flag | ⬚ — the worksheet issues one only conditionally ("if this lab issues one"); the repository does not record a Week 12 flag | A2 | Integrity control, not a mark |
 
 *Audit the AI* and the *EiPE / Prompt Problem* count toward the Defense + Reflection score, per the
@@ -213,11 +226,11 @@ push access outside the student's control (§8); Task 2/4's registry dependency 
 | **`sign.sh` step 2 fails on a local-only image, and `set -e` then kills step 3.** Verified 2026-07-26: `cosign sign --yes week12-supplychain:lab` resolves the bare tag to Docker Hub and errors with `Error: signing [week12-supplychain:lab]: accessing entity: GET https://index.docker.io/v2/library/week12-supplychain/manifests/lab: UNAUTHORIZED: authentication required`. Cosign works against a *registry*, not the local daemon, so the "verify PASS" half of Task 3 never prints | Push the image to a registry the class can write to first (⬚ — none is named in the repo), or run step 2 as the guided demo `sign.sh`'s own header says it is. Step 1 (SBOM) and the negative test both run standalone, so Task 3's other two deliverables are unaffected — run the three commands separately rather than the whole script when signing is a demo |
 | **Students omit the `--certificate-identity*` flags on the negative test.** Bare `cosign verify python:3.9-slim` stops at `Error: --certificate-identity or --certificate-identity-regexp is required for verification in keyless mode` — a *usage* error that proves nothing about signatures (verified against cosign v3.1.2). With the flags it prints `Error: no signatures found`, which is the real evidence | The worksheet now carries both flags. If a student submits the usage error, send them back: the deliverable is proof that verification **failed closed** on an unsigned image, not any failure at all |
 | **`sbom.cdx.json` is not git-ignored.** `sign.sh` writes it into the lab folder; `.gitignore` lists `sbom.json` and `sbom.xml` but not `sbom.cdx.json`, so it shows up as an untracked file (verified 2026-07-26 — 229 KB, CycloneDX 1.7, 119 components) | Have students keep the file with their evidence and delete it from the working tree at the end of the session. The curriculum monorepo's parity gate compares every file in the lab directory, so a leftover SBOM breaks it |
-| **The Docker-socket mount.** `sca_scan.sh` step 3/3 and `sign.sh` step 1/3 both mount `/var/run/docker.sock`. On this machine that path is a symlink to `$HOME/.docker/run/docker.sock` (verified 2026-07-26); on a Docker Desktop install where the symlink is absent, both `trivy image` steps fail while every other step keeps working | Check it before class with `ls -l /var/run/docker.sock`. Fallback: mount the real path, `-v "$HOME/.docker/run/docker.sock:/var/run/docker.sock"`. Task 1's marks come from steps 1/3 and 2/3, which need no socket at all, so this is survivable mid-session |
-| **The Trivy database is re-downloaded on *every* invocation, not just the first.** ~102 MiB before any output. `sca_scan.sh` and `sign.sh` run Trivy in throwaway `--rm` containers with no cache volume mounted, so nothing persists between runs — verified 2026-07-26, two runs ten minutes apart each downloaded 102.3 MiB. There are three Trivy steps across the two scripts, so one student's afternoon is ~300 MiB and a room of 40 is a network incident. Add the pulls of `aquasec/trivy:latest`, `python:3.9-slim` and `gcr.io/projectsigstore/cosign:latest`, plus step 2/3's `pip install pip-audit` inside the container, which needs PyPI reachable | Pre-pull the images and keep a USB copy (`docker save` / `docker load`). Warn the class that a re-run is not free — this is also the natural moment to explain why a real CI job caches the DB. If the room is behind a proxy that blocks `gcr.io`, discover that in advance: it is the one registry here that is neither Docker Hub nor a mirror |
-| **A student publishes a typosquat for real.** The whole exercise is one `twine upload` away from an attack on strangers | Brief the ethics boundary in the lecture at 1:55, not in the lab: controlled registry only, never the real PyPI/npm ([ETHICS.md](../../ETHICS.md), worksheet ethics note). Any student who asks "could I test this on real PyPI?" is the one to watch |
+| **The Docker-socket mount.** `sca_scan.sh` step 3/3 and `sign.sh` step 1/3 both mount `/var/run/docker.sock`. On this machine that path is a symlink to `$HOME/.docker/run/docker.sock` (verified 2026-07-26); on a Docker Desktop install where the symlink is absent, both `trivy image` steps fail while every other step keeps working | Check it before class with `ls -l /var/run/docker.sock`. Fallback: mount the real path, `-v "$HOME/.docker/run/docker.sock:/var/run/docker.sock"`. Task 1 (now homework) takes its marks from steps 1/3 and 2/3, which need no socket at all, so a student without the socket still earns them at home. In class, Task 3's SBOM (`sign.sh` step 1/3) does need it — hence the check before class |
+| **The Trivy database is re-downloaded on *every* invocation, not just the first.** ~102 MiB before any output. `sca_scan.sh` and `sign.sh` run Trivy in throwaway `--rm` containers with no cache volume mounted, so nothing persists between runs — verified 2026-07-26, two runs ten minutes apart each downloaded 102.3 MiB. There are three Trivy steps across the two scripts, so one student's full run is ~300 MiB. Task 1 is now homework, so `sca_scan.sh`'s two Trivy steps and its `pip install pip-audit` run on students' home networks; in class only Task 3's `sign.sh` step 1/3 runs Trivy (plus the instructor's `trivy fs` in the 0:10–0:25 demo) — one download per student instead of three, which in a room of 40 is still a network incident. Add the pulls of `aquasec/trivy:latest`, `python:3.9-slim` and `gcr.io/projectsigstore/cosign:latest`, and, for the homework run, step 2/3's `pip install pip-audit` inside the container, which needs PyPI reachable | Pre-pull the images and keep a USB copy (`docker save` / `docker load`). Warn the class that a re-run is not free — this is also the natural moment to explain why a real CI job caches the DB. If the room is behind a proxy that blocks `gcr.io`, discover that in advance: it is the one registry here that is neither Docker Hub nor a mirror |
+| **A student publishes a typosquat for real.** The whole exercise is one `twine upload` away from an attack on strangers | Brief the ethics boundary at the game briefing (0:10–0:25), not in the lab: controlled registry only, never the real PyPI/npm ([ETHICS.md](../../ETHICS.md), worksheet ethics note). Any student who asks "could I test this on real PyPI?" is the one to watch |
 | **Students `docker run` the image and hit a port clash.** Nothing this week needs the container to run — `app.py` exists to be scanned — but `EXPOSE 5000` invites it | Tell them not to. If someone does, note that on macOS AirPlay squats on 5000; publish another host port instead |
-| A student finishes Tasks 0–3 by 1:25 | Extension: generate a full hashed lockfile and prove `--require-hashes` now installs cleanly; or write the CI job that fails the build when `cosign verify` does — a preview of Week 15 |
+| A student finishes Tasks 0, 2 and 3 by 1:15 | Extension: generate a full hashed lockfile and prove `--require-hashes` now installs cleanly; or write the CI job that fails the build when `cosign verify` does — a preview of Week 15 |
 | Copy-paste of a classmate's SCA table or SBOM entry | Identity-stamped screenshots (`whoami` / student ID + timestamp) plus the viva spot-check. The remediation reasoning and the "which defence was most effective and why" note are the parts that cannot be copied without being explainable |
 
 ## 9. Post-teaching reflection

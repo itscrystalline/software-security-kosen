@@ -4,17 +4,11 @@
 |---|---|
 | **Course** | Software Security 2 (02005094, KOSEN-KMITL) |
 | **Week / date** | 6 · ⬚ |
-| **Contact time** | 150 min = 10 quiz + 15 explanation & demo + 125 supervised lab (in class: Tasks 0, 1, 2, 3, 5; homework: Tasks 4) |
+| **Contact time** | 150 min = 10 quiz + 15 explanation & demo + 125 supervised lab (in class: Tasks 0, 1, 2, 3, 5; homework: Task 4) |
 | **Lab folder** | `labs/week06-authn-authz` |
 | **Slides** | `slides/week06.md` |
 | **Standards** | OWASP 2025 **A01 Broken Access Control** · **A07 Authentication Failures** · CWE-639 (IDOR), CWE-347 (improper signature verification), CWE-321 (weak hardcoded key) |
 | **CLOs addressed** | **CLO2** exploit · **CLO3** remediate · **CLO5** evaluate & communicate · **CLO6** evidence & ethics |
-
-> **KOSEN-KMITL 02005094 runs a 150-min class (subject sheet, Oct 2026).** §4's lecture is now
-> pre-class material (the week's slides), shown in class only as a 15-min explanation + demo; §5
-> runs only the worksheet's *in class* tasks, and the rest are homework. The tables below keep the
-> original 120 + 180-min layout as the content reference — the class-time plan is in
-> [AGENDA.md](../../AGENDA.md) and each worksheet's Part 3.
 
 ---
 
@@ -66,37 +60,55 @@ algorithm, a strong secret and required claims — never a longer list of ids to
 - **Prerequisite concept:** basic HTTP request/response and the `Authorization: Bearer` header; the
   three-part structure of a JWT (`header.payload.signature`).
 
-## 4. Lecture — 120 min
+## 4. Pre-class material and in-class explanation — 10 min quiz + 15 min demo
+
+**Before class (students).** The concept material is pre-class: students study `slides/week06.md`
+and answer the worksheet's **Part 2** questions from it before the class starts. The slides carry
+what the 120-min lecture used to teach:
+
+| Block | Content |
+|---|---|
+| Core concept | Authentication vs. authorisation; sessions and JWT structure (`header.payload.signature`); why authorisation must be re-checked server-side on every object access; walk `/api/orders/<oid>` in `vulnerable_app.py` and show `current_user()` being called but its result ignored (identity proven, ownership never decided) |
+| Deep dive + real cases | IDOR / broken access control (CWE-639); JWT forgery two ways — `alg:none` (CWE-347) and a weak/guessable secret (CWE-321); privilege/identity escalation — impersonate another regular user (`bob`) via a forged `sub`, horizontal not vertical/admin; two brief real cases: the 2022 Optus breach (enumerable identifiers on a poorly-authorised API) and the Peloton API IDOR disclosure |
+| Defences | Deny-by-default ownership checks on every access (this lab's fix is a flat ownership equality check — `order["owner"] != user` — not RBAC/ABAC); pin the JWT algorithm (no `none`) and verify the signature; strong random secret + key management; require `exp` and `aud` claims; where a framework helps and where it does not |
+
+**In class**
 
 | Time | Block | Content | Method |
 |---|---|---|---|
-| 0:00–0:10 | Weekly quiz + recap | ~10-min retrieval quiz on Week 5 (XSS & client-side risks); today's agenda | Individual quiz, lowest 1–2 dropped |
-| 0:10–0:55 | Core concept | Authentication vs. authorisation; sessions and JWT structure (`header.payload.signature`); why authorisation must be re-checked server-side on every object access; walk `/api/orders/<oid>` in `vulnerable_app.py` and show `current_user()` being called but its result ignored (identity proven, ownership never decided) | Lecture + live coding on the projector |
-| 0:55–1:05 | Break | | |
-| 1:05–1:35 | Deep dive + real cases | IDOR / broken access control (CWE-639); JWT forgery two ways — `alg:none` (CWE-347) and a weak/guessable secret (CWE-321); privilege/identity escalation — impersonate another regular user (`bob`) via a forged `sub`, horizontal not vertical/admin; two brief real cases: the 2022 Optus breach (enumerable identifiers on a poorly-authorised API) and the Peloton API IDOR disclosure | Lecture + short discussion: "what single check would have stopped this?" |
-| 1:35–1:55 | Defences | Deny-by-default ownership checks on every access (this lab's fix is a flat ownership equality check — `order["owner"] != user` — not RBAC/ABAC); pin the JWT algorithm (no `none`) and verify the signature; strong random secret + key management; require `exp` and `aud` claims; where a framework helps and where it does not | Lecture with code-diff (`vulnerable_app.py` → `solution_app.py`) |
-| 1:55–2:00 | Brief the game | "IDOR Treasure Hunt + JWT Forgery" — loot orders that aren't yours, mint a token you were never given, then defend the app so both fail | Instruction |
+| 0:00–0:10 | Weekly quiz + today's goal | ~10-min retrieval quiz on Week 5 (XSS & client-side risks); today's goal | Individual quiz, lowest 1–2 dropped |
+| 0:10–0:25 | Explanation + live demo | Walk `/api/orders/<oid>` in `vulnerable_app.py` and show `current_user()` being called but its result ignored (identity proven, ownership never decided); then the `solution_app.py` diff — the flat ownership check `order["owner"] != user` and the algorithm pinned to HS256; brief the game — "IDOR Treasure Hunt + JWT Forgery": loot orders that aren't yours, mint a token you were never given, then defend the app so both fail | Live coding on the projector |
 
-**Checks for understanding during lecture**
-- After the core concept: cold-call *"in `/api/orders/<oid>`, which line proves the caller is authenticated, and which line is missing that would prove they are authorised?"*
-- Before the break: one-minute paper — *"why does a valid signature not tell you whether this user owns this order?"*
+**Checks for understanding during the demo**
+- Cold-call *"in `/api/orders/<oid>`, which line proves the caller is authenticated, and which line is missing that would prove they are authorised?"*
+- Before the lab starts: *"why does a valid signature not tell you whether this user owns this order?"*
 
-## 5. Laboratory — 180 min
+## 5. Supervised lab — 125 min in class + homework
 
 Target: `docker compose up` in `labs/week06-authn-authz` → `http://localhost:8080`
 (vulnerable app; `solution_app.py` is the correct version). Service name `authz-lab`; the compose
 file publishes host **8080 → container 5000**. Steps mirror `attack.md`.
 
+Only the worksheet's *in class* tasks run here (worksheet Part 3; [AGENDA.md](../../AGENDA.md),
+*How each worksheet is split*). The instructor circulates, checks evidence and reasoning, and runs
+2–3 **viva spot-checks** — a student reproduces and explains an exploit or fix live.
+
 | Time | Task | Student does | Evidence produced |
 |---|---|---|---|
-| 0:00–0:05 | **Task 0 — Onboarding (5 min)** | Stand the app up (`docker compose up`); log in as `alice` and capture her JWT into `$TOKEN`; confirm `/api/orders/1` returns her Laptop order | Screenshot of the token + order 1 |
-| 0:05–0:35 | **Task 1 — IDOR Treasure Hunt (30 min) 🗺️** | Read bob's order with alice's token: `curl -s http://localhost:8080/api/orders/2 -H "Authorization: Bearer $TOKEN"` (vs. `/api/orders/1`, which is hers) | Both responses + screenshot of bob's `Phone` order + why the missing ownership check (CWE-639) is the root cause |
-| 0:35–1:05 | **Task 2 — JWT Forgery via alg:none (30 min) 🔏** | Mint an unsigned token — `jwt.encode({"sub": "bob"}, key="", algorithm="none")` — and call `/api/orders/2` with it | Forged token + screenshot of the accepted response + explanation of the `none` flaw (CWE-347) |
-| 1:05–1:35 | **Task 3 — JWT Forgery via weak secret (30 min) 🔏** | Sign a valid HS256 token with the guessable secret — `jwt.encode({"sub": "bob"}, "secret", algorithm="HS256")` — and replay it | Token + screenshot + 2–3 sentences on why secret strength + key management matter |
-| 1:35–2:00 | **Task 4 — Privilege/identity escalation reasoning (25 min)** | Document the full attack chain (forge token → access any `oid`); optionally replay the requests through Burp Suite Repeater | Short chain diagram/paragraph + Burp (or `curl`) evidence |
+| 0:25–0:30 | **Task 0 — Onboarding (5 min)** | Stand the app up (`docker compose up`); log in as `alice` and capture her JWT into `$TOKEN`; confirm `/api/orders/1` returns her Laptop order | Screenshot of the token + order 1 |
+| 0:30–1:00 | **Task 1 — IDOR Treasure Hunt (30 min) 🗺️** | Read bob's order with alice's token: `curl -s http://localhost:8080/api/orders/2 -H "Authorization: Bearer $TOKEN"` (vs. `/api/orders/1`, which is hers) | Both responses + screenshot of bob's `Phone` order + why the missing ownership check (CWE-639) is the root cause |
+| 1:00–1:30 | **Task 2 — JWT Forgery via alg:none (30 min) 🔏** | Mint an unsigned token — `jwt.encode({"sub": "bob"}, key="", algorithm="none")` — and call `/api/orders/2` with it | Forged token + screenshot of the accepted response + explanation of the `none` flaw (CWE-347) |
+| 1:30–2:00 | **Task 3 — JWT Forgery via weak secret (30 min) 🔏** | Sign a valid HS256 token with the guessable secret — `jwt.encode({"sub": "bob"}, "secret", algorithm="HS256")` — and replay it | Token + screenshot + 2–3 sentences on why secret strength + key management matter |
 | 2:00–2:30 | **Task 5 — Defend / fix it (30 min) 🛡️** | Stop the vulnerable container (`Ctrl-C`), run the fixed app — `docker compose run --rm --service-ports authz-lab bash -c "pip install --no-cache-dir flask pyjwt && python solution_app.py"` — get a fresh alice token, then re-fire Tasks 1–3 | Screenshots of the **403** and both **401**s + the fix line for each: ownership check (L64), algorithm pinned to HS256 (L50), strong random secret + required `aud`/`exp` (L10/40) |
-| 2:30–2:50 | **AI-resilient tasks** | *Audit the AI* (critique an AI-written exploit or fix), *Explain-in-Plain-English*, *Prompt Problem* | Written answers (start in class, finish as homework) |
-| 2:50–3:00 | **Micro-demo + submit** | 2–3 rotating students give a 2–3 min "show your exploit/fix"; everyone submits | Worksheet PDF → Classroom; fixed code → GitHub |
+
+**Homework — submitted with the worksheet before the start of the next week's class**
+
+| Task | Student does | Evidence produced |
+|---|---|---|
+| **Task 4 — Privilege escalation to admin via a forged token (25 min) 🔏** | Forge a token claiming `sub=admin` (either technique from Task 2/3) to read the admin-only flag at `/api/admin`, and confirm alice's real token gets `403` there; then re-fire the forged admin token against `solution_app.py` — Task 5's `/api/admin` re-test goes with this task | Forged token + screenshot of the flag + the `403` for alice's real token + 2–3 sentences on why IDOR can't reach this (horizontal vs. vertical) and why the app's own `if user != "admin"` check didn't save it + the `/api/admin` **401** against `solution_app.py` and its fix line (L50) |
+| **Part 4, *Audit the AI*, *Comprehension & Prompt*** | Reflection; critique an AI-written exploit or fix; *Explain-in-Plain-English* and *Prompt Problem* | Written answers |
+
+Worksheet PDF → `learn.zcr.ai/submit`; fixed code → GitHub. Due before the start of the next week's class; late work loses 10% per started day and reaches 0 after 10 days (`syllabus.md` §6).
 
 **Formative checkpoints.** Task 1 is the fastest "aha" and needs only `curl` plus the header — a
 student who cannot make `/api/orders/2` leak has almost always mistyped the `Authorization: Bearer`
@@ -104,15 +116,15 @@ header or lost the `$TOKEN` variable; have them re-run Task 0. A student stuck o
 than ~10 minutes is usually hitting a PyJWT version that handles `alg:none` differently — check that
 encoding uses `key=""` and that the app decodes with `options={"verify_signature": False},
 algorithms=["none"]`. Tasks 1–3 must be landed by 2:00 for the defend task to fit; a student still
-stuck there should switch to Task 5 and return afterwards.
+stuck there should switch to Task 5 and finish the unfinished task at home.
 
 ## 6. Assessment for this week
 
 | Instrument | Evidence | Outcome | Weight |
 |---|---|---|---|
 | Worksheet 6, Parts 1–4 | Tokens/payloads, screenshots, fix lines, written answers | K1–K3, P1–P5, A2 | Part of the 30% worksheet component |
-| Weekly quiz (start of lecture) | Quiz score | K1–K3 | Part of the 10% quiz/participation component |
-| Viva spot-check / micro-demo | Live reproduction and explanation | P1–P5, A2 | Pass/flag for follow-up |
+| Weekly quiz (start of class) | Quiz score | K1–K3 | Part of the 10% quiz/participation component |
+| Viva spot-check (during the lab) | Live reproduction and explanation | P1–P5, A2 | Pass/flag for follow-up |
 | Lab flag (practice) | Public `…_demo` flag from the local lab — shows the exploit landed, not who landed it | A2 | Not a mark and not attributable; per-student flags are issued only by hosted CTFd instances (Week 9) |
 
 The worksheet's own rubric (100 pts) splits as: Part 2 lecture questions (20), Part 3 exploitation +
@@ -139,8 +151,8 @@ could not land the exploit.
 | Unpinned `pyjwt` behaves differently | `flask` and `pyjwt` are installed unpinned at container start, so behaviour tracks whatever PyPI serves that day; a PyJWT major-version change can alter how `alg:none` encodes/decodes. If Task 2 misbehaves, check `pip show pyjwt` and pin the version for the class |
 | Stale `$TOKEN` after switching to the fixed app | The fixed app's tokens carry `exp`/`aud`; an old vulnerable-app token replayed against `solution_app.py` yields 401 and can look like the exploit "still works" — have students re-run Task 0 to mint a fresh token after every restart |
 | Juice Shop optional target won't start | `bkimminich/juice-shop` is a large image needing port 3000 free; pull it before class only if students will actually use it |
-| Someone expects the local flags to be per-student | They are not: with no `.env` the app serves the placeholder `…_demo` values (`FLAG_IDOR`, `FLAG_JWT`), and a `.env` on the student's own machine is readable by the student, so seeding one does not make flags attributable. Treat the flag as proof the exploit ran; attribute through the viva spot-check and micro-demo (§6). Per-student flags come only from hosted CTFd instances (Week 9) |
-| A student finishes Tasks 1–3 early | Extension: against the still-running `vulnerable_app.py` (Task 5 hasn't switched it over yet), forge a `sub: admin` token (via `alg:none` or the weak secret) to reach `/api/admin` and read `FLAG_JWT` — this route does not exist in `solution_app.py`, so don't offer it after the Task 5 switchover; or write the regression test that proves the ownership check and algorithm pin stay fixed |
+| Someone expects the local flags to be per-student | They are not: with no `.env` the app serves the placeholder `…_demo` values (`FLAG_IDOR`, `FLAG_JWT`), and a `.env` on the student's own machine is readable by the student, so seeding one does not make flags attributable. Treat the flag as proof the exploit ran; attribute through the viva spot-check (§6). Per-student flags come only from hosted CTFd instances (Week 9) |
+| A student finishes Tasks 1–3 early | Extension: start homework Task 4 (the forged `sub=admin` token on `/api/admin`) against the still-running `vulnerable_app.py` before the Task 5 switchover — its `/api/admin` re-test against `solution_app.py` goes with Task 4; or write the regression test that proves the ownership check and algorithm pin stay fixed |
 | A student cannot land any exploit | Pair them for Task 1 (IDOR, `curl`-only), then require they land Task 2 or 3 alone; mark the mechanism explanation, not the keystrokes |
 | Copy-paste of a classmate's token/payload | The local flag is a public demo value and does not attribute anything; viva spot-check the pair |
 

@@ -52,7 +52,7 @@ is done.
 | Wk | Worksheet budget | In class | Before class | Homework |
 |----|:---:|---|---|---|
 | 1 | 220 | Tasks 0, 1, 2, 3, 3b, 4 — **125** | — | Tasks 5, 6, 7, 8 — **95** |
-| 2 | 180 | Tasks 0, 1, 2, 3, 4, 7, 8 — **115** | — | Tasks 5, 6 — **65** |
+| 2 | 180 | Tasks 0, 1, 2, 3, 4, 7, 8 — **115** | — | Tasks 5, 6 — optional bonus, **65** |
 | 3 | 180 | Tasks 0, 1, 2, 3, 4, 7, 9 — **115** | — | Tasks 5, 6, 8 — **65** |
 | 4 | 150 | Tasks 0, 1, 2, 3, 5 — **125** | — | Task 4 — **25** (Task 5's upload re-test goes with it) |
 | 5 | 150 | Tasks 0, 1, 2, 4, 5 — **125** | — | Task 3 — **25** |

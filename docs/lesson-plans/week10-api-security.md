@@ -4,17 +4,11 @@
 |---|---|
 | **Course** | Software Security 2 (02005094, KOSEN-KMITL) |
 | **Week / date** | 10 · ⬚ |
-| **Contact time** | 150 min = 10 quiz + 15 explanation & demo + 125 supervised lab (in class: Tasks 0, 1, 2, 3, 5; homework: Tasks 4 (optional bonus)) |
+| **Contact time** | 150 min = 10 quiz + 15 explanation & demo + 125 supervised lab (in class: Tasks 0, 1, 2, 3, 5; homework: Task 4 (optional bonus)) |
 | **Lab folder** | `labs/week10-api-security` |
 | **Slides** | `slides/week10.md` |
 | **Standards** | OWASP API Security Top 10:2023 — **API1 BOLA** · **API3 Broken Object Property Level Authorization** (mass assignment) · **API4 Unrestricted Resource Consumption** |
 | **CLOs addressed** | **CLO2** exploit · **CLO3** remediate · **CLO5** evaluate & communicate · **CLO6** evidence & ethics |
-
-> **KOSEN-KMITL 02005094 runs a 150-min class (subject sheet, Oct 2026).** §4's lecture is now
-> pre-class material (the week's slides), shown in class only as a 15-min explanation + demo; §5
-> runs only the worksheet's *in class* tasks, and the rest are homework. The tables below keep the
-> original 120 + 180-min layout as the content reference — the class-time plan is in
-> [AGENDA.md](../../AGENDA.md) and each worksheet's Part 3.
 
 ---
 
@@ -64,53 +58,71 @@ hammered for free.
 - **Prerequisite concept:** what an object id / IDOR is (Week 6), and basic HTTP verbs with `curl`
   (`-X POST`, `-H`, `-d`).
 
-## 4. Lecture — 120 min
+## 4. Pre-class material and in-class explanation — 10 min quiz + 15 min demo
+
+**Before class (students).** The concept material is pre-class: students study `slides/week10.md`
+and answer the worksheet's **Part 2** questions from it before the class starts. The slides carry
+what the 120-min lecture used to teach:
+
+| Block | Content |
+|---|---|
+| Core concepts | Why APIs are different: machine-to-machine, no browser safety net (no SameSite/CSP); object ids everywhere → IDOR/BOLA; clients can send any field → mass assignment; the OWASP API Security Top 10. Worked example: `GET /api/users/2/orders` (yours) vs `/api/users/3/orders` (someone else's) — BOLA (API1), no ownership check exists at all |
+| Deep dive + real cases | Mass assignment (API3) — client sets `role`/`credit` the server blindly binds; API2 broken authentication, API4 unrestricted resource consumption (no rate limit), excessive data exposure. Real cases: a named API authorization breach (worksheet Part 4 asks students to research the Optus / T-Mobile BOLA/IDOR incidents), then the deck's "legitimate feature + missing authz → RCE" example (WordPress 404-template editor); short discussion "what would have stopped this?" |
+| Defences | Object-level authorization on every request (ownership check); allow-list request schemas / bind only intended fields, return DTOs; rate limiting and quotas; schema validation (OpenAPI / GraphQL types) |
+
+**In class**
 
 | Time | Block | Content | Method |
 |---|---|---|---|
-| 0:00–0:10 | Weekly quiz + recap | ~10-min retrieval quiz; recap the web half (injection, XSS, auth/IDOR) and bridge IDOR → BOLA; today's agenda | Individual quiz, lowest 1–2 dropped |
-| 0:10–0:55 | Core concepts | Why APIs are different: machine-to-machine, no browser safety net (no SameSite/CSP); object ids everywhere → IDOR/BOLA; clients can send any field → mass assignment; the OWASP API Security Top 10. Worked example: `GET /api/users/2/orders` (yours) vs `/api/users/3/orders` (someone else's) — BOLA (API1), no ownership check exists at all | Lecture + live `curl` on the projector |
-| 0:55–1:05 | Break | | |
-| 1:05–1:35 | Deep dive + real cases | Mass assignment (API3) — client sets `role`/`credit` the server blindly binds; API2 broken authentication, API4 unrestricted resource consumption (no rate limit), excessive data exposure. Real cases: a named API authorization breach (worksheet Part 4 asks students to research the Optus / T-Mobile BOLA/IDOR incidents), then the deck's "legitimate feature + missing authz → RCE" example (WordPress 404-template editor); short discussion "what would have stopped this?" | Lecture + short discussion |
-| 1:35–1:55 | Defences | Object-level authorization on every request (ownership check); allow-list request schemas / bind only intended fields, return DTOs; rate limiting and quotas; schema validation (OpenAPI / GraphQL types) | Lecture with before/after code |
-| 1:55–2:00 | Brief the game | **"crAPI Raid"** — exploit BOLA + mass assignment against this week's own local app (:8080/:8081), then read `solution_api.py` and cite the fix line (Task 5, not student-authored); crAPI itself is Task 4, an optional 20-min bonus with no fix step and no grading weight | Instruction |
+| 0:00–0:10 | Weekly quiz + today's goal | ~10-min retrieval quiz; recap the web half (injection, XSS, auth/IDOR) and bridge IDOR → BOLA; today's goal | Individual quiz, lowest 1–2 dropped |
+| 0:10–0:25 | Explanation + live demo | Worked example: `GET /api/users/2/orders` (yours) vs `/api/users/3/orders` (someone else's) on `:8080` — BOLA (API1), no ownership check exists at all; then the same request against `:8081`, where the per-object ownership check in `solution_api.py` refuses it; brief the game — **"crAPI Raid"**: exploit BOLA + mass assignment against this week's own local app (:8080/:8081), then read `solution_api.py` and cite the fix line (Task 5, not student-authored); crAPI itself is Task 4, an optional 20-min homework bonus with no fix step and no grading weight | Live `curl` on the projector |
 
-**Checks for understanding during lecture**
-- After the core concept: cold-call *"the server knows who I am — why does it still leak user 1002's data?"* (it never checks the object belongs to the caller).
+**Checks for understanding during the demo**
 - On the recap: cold-call *"what was IDOR?"* — then name BOLA as the same bug at API scale.
-- At the end: *"what one check stops BOLA?"* (per-object ownership authorization on every request).
+- After the worked example: cold-call *"the server knows who I am — why does it still leak user 1002's data?"* (it never checks the object belongs to the caller).
+- Before the lab starts: *"what one check stops BOLA?"* (per-object ownership authorization on every request).
 
-## 5. Laboratory — 180 min
+## 5. Supervised lab — 125 min in class + homework
 
 Target: `docker compose up` in `labs/week10-api-security` → `http://localhost:8080` (INSECURE,
 `vulnerable_api.py`) and `http://localhost:8081` (SECURE, `solution_api.py`). Seeded users:
 `alice` (id 1), `bob` (id 2), `carol` (id 3, admin, balance 9999).
 
+Only the worksheet's *in class* tasks run here (worksheet Part 3; [AGENDA.md](../../AGENDA.md),
+*How each worksheet is split*). The instructor circulates, checks evidence and reasoning, and runs
+2–3 **viva spot-checks** — a student reproduces and explains an exploit or fix live.
+
 | Time | Task | Student does | Evidence produced |
 |---|---|---|---|
-| 0:00–0:15 | **Task 0 — Onboarding** (15 min) | `curl http://localhost:8080/` and `curl http://localhost:8081/`; note which port is insecure; record the three seeded users | Both root responses + the user table |
-| 0:15–0:50 | **Task 1 — BOLA: read another user's orders** (35 min) | `curl http://localhost:8080/api/users/3/orders` — receive carol's "Server rack" order with no auth; iterate the id (`/api/users/2/orders`); on `:8081` observe the ladder — `401` (no identity), `403` (`X-User-Id: 1` reading id 3), `200` (`X-User-Id: 1` reading id 1) | Leaked order JSON + the 401/403/200 transcript + mitigation note (API1) |
-| 0:50–1:20 | **Task 2 — Mass assignment: self-promote to admin** (30 min) | `curl -X POST http://localhost:8080/api/users -H "Content-Type: application/json" -d '{"username":"mallory","password":"x","is_admin":true,"balance":1000000}'`; confirm the response echoes `"is_admin": true, "balance": 1000000`; repeat against `:8081` → forced to `is_admin:false, balance:0` | Both responses side by side + mitigation note (API3) |
-| 1:20–1:45 | **Task 3 — Unrestricted resource consumption: brute-force login** (25 min) | Run the brute-force loop from `attack.md` against `:8080` (guesses incl. `alice123`) — all attempts processed; on `:8081` loop 7 times and confirm the 6th/7th return `429` | The `401 401 401 401 401 429 429` sequence + mitigation note (API4) |
-| 1:45–2:05 | **Task 4 — Bonus: crAPI Raid** (optional, 20 min) | Against the student's own OWASP crAPI instance (`git clone https://github.com/OWASP/crAPI.git`), capture one BOLA or mass-assignment flag | Flag + endpoint + which API Top 10 id it maps to |
-| 2:05–2:25 | **Task 5 — Defend / fix it** (20 min) | Read the three `# --- FIX …` blocks in `solution_api.py`; for each finding quote the line that defeats it — the per-object ownership check `caller["id"] != uid and not caller["is_admin"]`, the `ALLOWED_CREATE_FIELDS` binding, and the `RATE_LIMIT=5 / RATE_WINDOW=60` limiter — and give the new `:8081` status | Per API1/API3/API4: the exploit, the `solution_api.py` line that blocks it, the new HTTP status |
-| 2:25–2:45 | **AI-resilient tasks** (20 min) | *Audit the AI* (critique an AI-written exploit/fix), *Explain-in-Plain-English*, *Prompt Problem* | Written answers (start in class, finish as homework) |
-| 2:45–3:00 | **Micro-demo + submit** (15 min) | 2–3 rotating students give a 2–3 min "show your exploit/fix"; everyone submits | Worksheet PDF → Classroom; fixed code → GitHub |
+| 0:25–0:40 | **Task 0 — Onboarding (15 min)** | `curl http://localhost:8080/` and `curl http://localhost:8081/`; note which port is insecure; record the three seeded users | Both root responses + the user table |
+| 0:40–1:15 | **Task 1 — BOLA: read another user's orders (35 min)** | `curl http://localhost:8080/api/users/3/orders` — receive carol's "Server rack" order with no auth; iterate the id (`/api/users/2/orders`); on `:8081` observe the ladder — `401` (no identity), `403` (`X-User-Id: 1` reading id 3), `200` (`X-User-Id: 1` reading id 1) | Leaked order JSON + the 401/403/200 transcript + mitigation note (API1) |
+| 1:15–1:45 | **Task 2 — Mass assignment: self-promote to admin (30 min)** | `curl -X POST http://localhost:8080/api/users -H "Content-Type: application/json" -d '{"username":"mallory","password":"x","is_admin":true,"balance":1000000}'`; confirm the response echoes `"is_admin": true, "balance": 1000000`; repeat against `:8081` → forced to `is_admin:false, balance:0` | Both responses side by side + mitigation note (API3) |
+| 1:45–2:10 | **Task 3 — Unrestricted resource consumption: brute-force login (25 min)** | Run the brute-force loop from `attack.md` against `:8080` (guesses incl. `alice123`) — all attempts processed; on `:8081` loop 7 times and confirm the 6th/7th return `429` | The `401 401 401 401 401 429 429` sequence + mitigation note (API4) |
+| 2:10–2:30 | **Task 5 — Defend / fix it (20 min)** | Read the three `# --- FIX …` blocks in `solution_api.py`; for each finding quote the line that defeats it — the per-object ownership check `caller["id"] != uid and not caller["is_admin"]`, the `ALLOWED_CREATE_FIELDS` binding, and the `RATE_LIMIT=5 / RATE_WINDOW=60` limiter — and give the new `:8081` status | Per API1/API3/API4: the exploit, the `solution_api.py` line that blocks it, the new HTTP status |
+
+**Homework — submitted with the worksheet before the start of the next week's class**
+
+| Task | Student does | Evidence produced |
+|---|---|---|
+| **Task 4 — Bonus: crAPI Raid (optional, 20 min)** | Optional bonus. Against the student's own OWASP crAPI instance (`git clone https://github.com/OWASP/crAPI.git`), capture one BOLA or mass-assignment flag | Flag + endpoint + which API Top 10 id it maps to |
+| **Part 4, *Audit the AI*, *Comprehension & Prompt*** | Reflection; critique an AI-written exploit/fix; *Explain-in-Plain-English* and *Prompt Problem* | Written answers |
+
+Worksheet PDF → `learn.zcr.ai/submit`; fixed code → GitHub. Due before the start of the next week's class; late work loses 10% per started day and reaches 0 after 10 days (`syllabus.md` §6).
 
 **Formative checkpoints.** Tasks 1–3 (the three graded exploits) must be finished before the defend
-task — a student still on Task 1 at 1:20 should carry Task 5 forward and return to the rest. If a
+task — a student still on Task 1 at 1:45 should carry Task 5 forward and finish the rest at home. If a
 Task 1 request against `:8080` comes back `401` or `403`, the student is curling `:8081` (the secure
-API) by mistake — check the port before debugging anything else. Task 4 is optional: if the room is
-behind, skip it and treat the local `:8080` / `:8081` pair as the graded target; if a student breezes
-through, the crAPI raid is their extension.
+API) by mistake — check the port before debugging anything else. Task 4 is optional homework, not part
+of the lab, so the local `:8080` / `:8081` pair is the in-class target; if a student breezes through,
+the crAPI raid is their extension.
 
 ## 6. Assessment for this week
 
 | Instrument | Evidence | Outcome | Weight |
 |---|---|---|---|
 | Worksheet 10, Parts 2–4 | Payloads, raw responses / HTTP status, screenshots, fix lines, written answers | K1–K3, P1–P4, A2 | Part of the 30% worksheet component |
-| Weekly quiz (start of lecture) | Quiz score | K1–K2 | Part of the 10% quiz/participation component |
-| Viva spot-check / micro-demo | Live reproduction and explanation | P1–P4, A2 | Pass/flag for follow-up |
+| Weekly quiz (start of class) | Quiz score | K1–K2 | Part of the 10% quiz/participation component |
+| Viva spot-check (during the lab) | Live reproduction and explanation | P1–P4, A2 | Pass/flag for follow-up |
 | Per-student flag (hosted instances only) | Flag value tied to the individual student; a local run serves a public demo value | A2 | Integrity control, not a mark |
 
 The worksheet's own rubric (100 pts) weights it as: Lecture questions (Part 2) 20 · Exploitation +
@@ -138,7 +150,7 @@ not land the exploit.
 | Apple-Silicon platform mismatch | `python:3.12-slim` is multi-arch and pulls/runs natively on arm64 (verified for this plan) — no `--platform` flag needed for the local lab |
 | Re-running the Task 3 `:8081` loop looks "broken" | The limiter is `RATE_LIMIT=5 / RATE_WINDOW=60`: a second run of the loop *inside the same 60-second window* returns `429` from the first attempt, not `401`×5 then `429`. Wait out the 60 s, or restart the `solution-api` container, before demonstrating the clean `401 401 401 401 401 429 429` sequence |
 | Need to reset seeded state between attempts | `USERS`, `ORDERS` and the rate-limiter counters are all in-memory — `docker compose restart` (or `down`/`up`) clears the mallory account from Task 2 and the login attempts from Task 3 back to the seeded three users |
-| Optional crAPI bonus needs network + a large pull | Task 4 clones and pulls a multi-container stack from the internet; if the room network is slow, skip it (it is optional) and grade against the local `:8080` / `:8081` pair. Pull crAPI ahead of class if you plan to demo it |
+| Optional crAPI bonus needs network + a large pull | Task 4 clones and pulls a multi-container stack from the internet. It is optional homework on the student's own machine, so it costs no lab time; a student who starts it in class as an extension on a slow room network should drop it and stay on the local `:8080` / `:8081` pair. Pull crAPI ahead of class if you plan to demo it |
 | Copy-paste of a classmate's evidence | Local flags are the public `…_demo` defaults, so they attribute nothing (per-student flags exist only on hosted instances); rely on identity-stamped evidence and viva spot-check the pair |
 
 ## 9. Post-teaching reflection

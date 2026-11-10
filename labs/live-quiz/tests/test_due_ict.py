@@ -215,4 +215,6 @@ def test_a_student_past_the_deadline_inside_the_window_can_still_upload(teacher,
     assert "Uploads are still accepted" in page
     assert 'type="file"' in page
     csv_text = teacher.get(f"/work/{aid}/results.csv").get_data(as_text=True)
-    assert csv_text.splitlines()[0].endswith(",days_late")
+    # The late columns are appended after the original eight, so readers that go by position work.
+    assert csv_text.splitlines()[0].endswith(
+        ",fully_graded,days_late,late_penalty_pct,adjusted_percent")

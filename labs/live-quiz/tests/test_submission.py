@@ -542,3 +542,210 @@ def test_the_gradebook_row_carries_days_late_without_deducting(conn, uploads):
     (row,) = S.gradebook_rows(conn, aid)
     assert row["late"] is True and row["days_late"] == 2
     assert row["percent"] == pytest.approx(100.0), "the penalty stays the teacher's call"
+
+
+# --- the late penalty and on-time work in a late window ---------------------
+# KOSEN: −10% per started day after the deadline, down to 0. The window is the assignment's
+# (late_days); the rate is the course's ($COURSES late_pct_per_day), applied only where the
+# assignment has a window.
+
+@pytest.fixture
+def kosen(monkeypatch):
+    import content as C
+    monkeypatch.setattr(C, "COURSES", [dict(C.COURSES[0], slug="kosen", late_pct_per_day=10)])
+
+
+def _fully_mark(conn, aid, sub):
+    for r in S.rubric_of(S.get_assignment(conn, aid)):
+        S.grade(conn, sub["id"], r["criterion"], r["max"], "", T0)
+
+
+@pytest.mark.parametrize("days,penalty", [(0, 0), (1, 10), (2, 20), (10, 100), (12, 100)])
+def test_each_started_day_late_costs_the_course_rate_capped_at_100(conn, kosen, days, penalty):
+    a = S.get_assignment(conn, make(conn, late_days=10))
+    assert S.late_pct_per_day(a) == 10
+    assert S.late_penalty_pct(a, days) == penalty
+
+
+def test_the_export_keeps_the_raw_mark_and_adds_the_penalised_one(conn, uploads, kosen):
+    aid = make(conn, late_days=10)
+    sub, _ = open_sub(conn, aid)
+    S.store_file(conn, sub, display_name="a.pdf", data=b"x",
+                 now="2026-08-23T10:00:00", upload_dir=uploads)       # 3 started days late
+    _fully_mark(conn, aid, sub)
+    (row,) = S.gradebook_rows(conn, aid)
+    assert row["late"] is True and row["days_late"] == 3
+    assert row["percent"] == pytest.approx(100.0), "percent stays the raw mark"
+    assert row["penalty_pct"] == 30
+    assert row["adjusted_percent"] == pytest.approx(70.0)
+
+
+def test_no_window_means_no_computed_penalty_even_with_a_course_rate(conn, uploads, kosen):
+    # Every MFU worksheet (and every one from before late_days) has no window. A rate on a
+    # shared course slug must not start deducting from them.
+    aid = make(conn)
+    sub, _ = open_sub(conn, aid)
+    conn.execute("UPDATE assignments SET due_at=? WHERE id=?", ("2026-08-15T07:00:00", aid))
+    conn.execute("UPDATE submissions SET submitted_at=? WHERE id=?",
+                 ("2026-08-15T09:00:00", sub["id"]))
+    conn.commit()
+    _fully_mark(conn, aid, sub)
+    (row,) = S.gradebook_rows(conn, aid)
+    assert row["late"] is True and row["days_late"] == 1
+    assert row["penalty_pct"] is None and row["adjusted_percent"] is None
+
+
+def test_no_course_rate_leaves_the_penalty_to_the_teacher(conn, uploads):
+    aid = make(conn, late_days=10)
+    sub, _ = open_sub(conn, aid)
+    S.store_file(conn, sub, display_name="a.pdf", data=b"x", now=LATE, upload_dir=uploads)
+    (row,) = S.gradebook_rows(conn, aid)
+    assert row["days_late"] == 1
+    assert row["penalty_pct"] is None and row["adjusted_percent"] is None
+
+
+def test_on_time_work_is_final_while_late_work_is_still_taken(conn, uploads, kosen):
+    # A stray re-upload must not turn an on-time hand-in late, and deleting it in the late
+    # window would leave an on-time timestamp on a submission with no files.
+    aid = make(conn, late_days=10)
+    sid = _handed_in_then_lost_the_session(conn, aid, uploads)["id"]
+    on_time = conn.execute("SELECT * FROM submissions WHERE id = ?", (sid,)).fetchone()
+    f = S.list_files(conn, sid)[0]
+    assert not S.can_upload(conn, on_time, LATE)
+    with pytest.raises(S.SubmitError, match="deadline"):
+        S.store_file(conn, on_time, display_name="b.pdf", data=b"x", now=LATE,
+                     upload_dir=uploads)
+    with pytest.raises(S.SubmitError, match="deadline"):
+        S.delete_file(conn, on_time, f["id"], LATE, uploads)
+    (row,) = S.gradebook_rows(conn, aid)
+    assert row["late"] is False and row["days_late"] == 0
+
+
+def test_a_code_does_not_reopen_on_time_work_in_the_late_window(conn, uploads, kosen):
+    aid = make(conn, late_days=10)
+    _handed_in_then_lost_the_session(conn, aid, uploads)
+    code = S.issue_codes(conn, aid, ["65310001"], T0)["65310001"]
+    _deadline_passed(conn, code, LATE)
+
+
+def test_a_course_with_no_late_rate_can_replace_on_time_work_as_late(conn, uploads):
+    # Cryptography's published rule: replacing a file after the deadline makes the hand-in
+    # late. It has a late window but no per-day rate, so the on-time lock must not apply.
+    aid = make(conn, late_days=10)
+    sid = _handed_in_then_lost_the_session(conn, aid, uploads)["id"]
+    on_time = conn.execute("SELECT * FROM submissions WHERE id = ?", (sid,)).fetchone()
+    assert S.can_upload(conn, on_time, LATE)
+    S.store_file(conn, on_time, display_name="b.pdf", data=b"x", now=LATE, upload_dir=uploads)
+    (row,) = S.gradebook_rows(conn, aid)
+    assert row["late"] is True and row["days_late"] == 1
+
+
+def test_a_late_hand_in_can_be_added_to_and_is_costed_from_its_last_upload(conn, uploads, kosen):
+    aid = make(conn, late_days=10)
+    sub, _ = open_sub(conn, aid)
+    S.store_file(conn, sub, display_name="a.pdf", data=b"x",
+                 now="2026-08-21T09:00:00", upload_dir=uploads)       # day 1
+    sub = conn.execute("SELECT * FROM submissions WHERE id = ?", (sub["id"],)).fetchone()
+    assert S.can_upload(conn, sub, "2026-08-23T09:00:00")
+    S.store_file(conn, sub, display_name="b.pdf", data=b"x",
+                 now="2026-08-23T09:00:00", upload_dir=uploads)       # day 3
+    (row,) = S.gradebook_rows(conn, aid)
+    assert row["days_late"] == 3 and row["penalty_pct"] == 30
+
+
+# --- re-usable submit codes, per course (owner decision 2026-11-04, KOSEN) ---------
+# In a course listed in $REUSABLE_SUBMIT_COURSES a used code re-opens the SAME submission while
+# the worksheet still takes the student's work; every other course keeps single-use codes.
+
+@pytest.fixture
+def this_course():
+    """The slug make() files assignments under (the default course)."""
+    import content as C
+    return C.COURSES[0]["slug"]
+
+
+def _files(conn, sub_id):
+    return conn.execute("SELECT COUNT(*) FROM submission_files WHERE submission_id = ?",
+                        (sub_id,)).fetchone()[0]
+
+
+def test_a_listed_course_reopens_the_same_submission(conn, uploads, this_course, monkeypatch):
+    monkeypatch.setenv("REUSABLE_SUBMIT_COURSES", this_course)
+    aid = make(conn, late_days=10)
+    sub, code = open_sub(conn, aid)
+    S.store_file(conn, sub, display_name="a.pdf", data=b"x", now=T0, upload_dir=uploads)
+    again = S.redeem(conn, code, "2026-08-16T09:00:00")       # new device, before the deadline
+    assert again["id"] == sub["id"]
+    assert _files(conn, again["id"]) == 1, "the work handed in is still there"
+
+
+def test_a_listed_course_lets_the_student_upload_after_reopening(conn, uploads, this_course, monkeypatch):
+    # The lockout this fixes: code entered, tab closed before any upload, session gone.
+    monkeypatch.setenv("REUSABLE_SUBMIT_COURSES", this_course)
+    aid = make(conn)
+    sub, code = open_sub(conn, aid)
+    again = S.redeem(conn, code, "2026-08-16T09:00:00")
+    assert S.can_upload(conn, again, "2026-08-16T09:00:00")
+    S.store_file(conn, again, display_name="a.pdf", data=b"x",
+                 now="2026-08-16T09:00:00", upload_dir=uploads)
+    assert _files(conn, sub["id"]) == 1
+
+
+def test_an_unlisted_course_still_burns_the_code(conn, this_course, monkeypatch):
+    monkeypatch.setenv("REUSABLE_SUBMIT_COURSES", "cryptography,cloud-security")
+    aid = make(conn)
+    _, code = open_sub(conn, aid)
+    with pytest.raises(S.SubmitError) as exc:
+        S.redeem(conn, code, T0)
+    assert str(exc.value) == S.CODE_ALREADY_USED
+
+
+def test_no_setting_means_every_course_is_single_use(conn, this_course, monkeypatch):
+    monkeypatch.delenv("REUSABLE_SUBMIT_COURSES", raising=False)
+    aid = make(conn)
+    _, code = open_sub(conn, aid)
+    with pytest.raises(S.SubmitError) as exc:
+        S.redeem(conn, code, T0)
+    assert str(exc.value) == S.CODE_ALREADY_USED
+
+
+def test_a_listed_course_refuses_once_the_worksheet_has_closed(conn, this_course, monkeypatch):
+    monkeypatch.setenv("REUSABLE_SUBMIT_COURSES", f" {this_course} , other ")    # spaces are tolerated
+    aid = make(conn)                                            # no late window: closes at DUE
+    _, code = open_sub(conn, aid)
+    with pytest.raises(S.SubmitError) as exc:
+        S.redeem(conn, code, LATE)
+    assert str(exc.value) == S.CODE_WORKSHEET_CLOSED
+
+
+def test_a_listed_course_reopens_in_the_late_window(conn, uploads, this_course, monkeypatch):
+    # Past due but inside the late window the worksheet still takes work (can_upload() is
+    # True), so the code re-opens it too — the same instant the session path would.
+    monkeypatch.setenv("REUSABLE_SUBMIT_COURSES", this_course)
+    aid = make(conn, late_days=10)
+    sub, code = open_sub(conn, aid)
+    again = S.redeem(conn, code, LATE)
+    assert again["id"] == sub["id"] and S.can_upload(conn, again, LATE)
+
+
+def test_a_listed_course_keeps_on_time_work_final_in_the_late_window(conn, uploads, kosen,
+                                                                       monkeypatch):
+    # #172's on-time lock holds for a re-used code too: handed in before the deadline, the
+    # work is final in the late window, so the code does not re-open it for changes.
+    monkeypatch.setenv("REUSABLE_SUBMIT_COURSES", "kosen")
+    aid = make(conn, late_days=10)
+    sub, code = open_sub(conn, aid)
+    S.store_file(conn, sub, display_name="a.pdf", data=b"x", now=T0, upload_dir=uploads)
+    with pytest.raises(S.SubmitError) as exc:
+        S.redeem(conn, code, LATE)
+    assert str(exc.value) == S.CODE_WORKSHEET_CLOSED
+
+
+def test_a_listed_course_starts_afresh_if_the_old_submission_was_removed(conn, this_course, monkeypatch):
+    monkeypatch.setenv("REUSABLE_SUBMIT_COURSES", this_course)
+    aid = make(conn)
+    sub, code = open_sub(conn, aid)
+    conn.execute("DELETE FROM submissions WHERE id = ?", (sub["id"],))
+    conn.commit()
+    again = S.redeem(conn, code, T0)
+    assert again["assignment_id"] == aid and again["student_id"] == "65310001"

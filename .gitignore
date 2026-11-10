@@ -48,6 +48,8 @@ instructor/
 
 # libFuzzer crash artifacts
 crash-*
+# Week 2 fuzzing corpus (worksheet Task 4: mkdir -p corpus)
+labs/week02-sdlc-tooling/corpus/
 .gstack/
 
 # /codex skill session-continuity state (Codex thread ID for resume)

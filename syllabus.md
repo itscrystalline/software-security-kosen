@@ -103,8 +103,8 @@ A one-page **"Lab 0" setup guide** is provided before Week 1: the whole environm
 *🏁 Game — "Bug Triage Race" + "Fuzzing Race":* run Semgrep + Gitleaks on a flawed repo and triage by CWE (scored); intro coverage-guided fuzzing (first crash wins).
 
 **Week 3 — Cryptography Used Correctly (and Misused)**
-*Concepts:* Hashing vs. encryption vs. encoding; symmetric/asymmetric basics; password storage (bcrypt/argon2); TLS overview; common failures (ECB, hardcoded keys, weak randomness, MD5/SHA-1). Maps to **A04:2025 Cryptographic Failures**.
-*🔓 Game — "Capture the Hash":* crack weak hashes + break an ECB oracle (speedrun), then remediate with a vetted KDF and authenticated encryption.
+*Concepts:* Crypto misuse in application code: hashing vs. encryption vs. encoding; password storage (argon2id) and migrating legacy hashes (rehash-on-login); keys out of source; CSPRNG tokens; what scanners catch and miss (ECB, hardcoded keys, weak randomness, MD5/SHA-1). Maps to **A04:2025 Cryptographic Failures**. How the primitives work and break (cracking, cipher modes, AEAD, TLS) is taught in Cryptography and Network Security (02005104), so it is not repeated here.
+*🔎 Game — "Misuse Hunt":* scan a small crypto module with Semgrep + Gitleaks, find the mistakes the tools miss by reading the code, then migrate MD5 passwords to argon2id and run the fixed version.
 
 ### Unit B — Web Application Security (Weeks 4–6)
 

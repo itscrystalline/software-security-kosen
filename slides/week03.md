@@ -9,28 +9,38 @@ header: "Software Security · Week 3"
 ## Cryptography Used Correctly (and Misused)
 Software Security · Nutthakorn Chalaemwongwan
 
-<!-- Hook: paste an MD5 hash on screen and crack it live in seconds with a wordlist — "this is why how you store passwords matters." Today is about using crypto correctly; most failures are misuse, not broken math. ~2 min. -->
+<!-- Hook: put vulnerable_crypto.py on screen (26 lines) and ask "how many crypto mistakes?" Most people say one (MD5). There are four, and a scanner finds only some of them. Today is about finding crypto misuse in code and fixing it with the right library call; how the math works and breaks is the Cryptography course's job. ~2 min. -->
 
 ---
 
 ## Today
 
-- Hashing vs encryption vs encoding
-- Password storage done right
-- Symmetric / asymmetric basics
-- Common crypto failures (A04:2025)
-- 🔓 Game: **Capture the Hash**
+- Two courses, two angles: Cryptography explains *how it breaks*; we find *where it hides in code*
+- What a scanner catches — and what it misses
+- Passwords: argon2id + moving old MD5 records (rehash-on-login)
+- Keys out of source · CSPRNG tokens
+- 🔎 Game: **Misuse Hunt**
 
-<!-- Roadmap, 1 min. Lab: crack weak hashes + break an ECB oracle, then remediate. Theme: "don't roll your own crypto; misuse vetted primitives correctly." -->
+<!-- Roadmap, 1 min. Lab: scan, hunt the rest by reading, migrate MD5 to argon2id, run the fixed version. -->
 
 ---
 
 ## Recap — Week 2
 
-- Tools find bug *patterns*; today we study one bug *class* deeply
-- Crypto misuse is subtle: code "works" but isn't safe
+- Semgrep flagged **MD5** as a bug pattern
+- Today: the crypto mistakes a pattern **can't** see — and why
 
-<!-- Bridge: a SAST tool flags MD5 (W2) — today we understand WHY it's wrong and what to do instead. ~1 min. -->
+<!-- Bridge: in W2 a SAST tool flagged MD5. Today the same tool is run on a small crypto module; it finds one thing, the rest is code review. ~1 min. -->
+
+---
+
+## Two courses, two angles
+
+- **Cryptography and Network Security (02005104):** how primitives work and break — cracking weak hashes, cipher modes, MACs, AEAD, TLS
+- **This course:** where crypto misuse hides in *application code*, how to find it, which library call fixes it
+- So no hash cracking or ECB attacks here — you do those in the Cryptography labs
+
+<!-- All KOSEN students take both courses. Say it plainly: we do not repeat the attacks; we use what they learned there to review code. If they ask about cracking for the midterm practical, hashes.txt is in the lab folder as optional practice. ~2 min. -->
 
 ---
 
@@ -40,102 +50,96 @@ Software Security · Nutthakorn Chalaemwongwan
 - **Encryption** — reversible *with a key* (confidentiality)
 - **Encoding** — reversible *without a key* (Base64 ≠ security!)
 
-<!-- The #1 source of crypto bugs is conceptual confusion. Demo: base64-decode a string live to show encoding gives no protection. Ask: "is hashing reversible?" (no) "is Base64?" (yes, trivially). ~5 min. -->
-
----
-
-## Symmetric vs asymmetric
-
-- **Symmetric** (AES, ChaCha20) — one shared key, fast
-- **Asymmetric** (RSA, ECC) — public/private key pair
-- TLS uses asymmetric to exchange a symmetric session key
-
-<!-- Keep it intuitive: symmetric = one shared password (fast, but key distribution problem); asymmetric = padlock anyone can close, only you open. TLS = best of both. ~4 min. -->
+<!-- The #1 source of crypto bugs is conceptual confusion. Demo: base64-decode a string live to show encoding gives no protection. Part 2 Q1 asks which one store_password() and encrypt_ecb() use. ~3 min. -->
 
 ---
 
 ## Password storage
 
 - Never store plaintext or plain hashes
-- Use a **slow, salted KDF**, in order of preference: **argon2id** → scrypt (if argon2id unavailable) → bcrypt (legacy systems only) → PBKDF2 (FIPS-140 compliance only)
-- Salt is per-user and random
+- Use a **slow, salted KDF**: **argon2id** (scrypt / bcrypt / PBKDF2 only where argon2id isn't available)
+- Salt is per-user and random: identical passwords hash differently, so precomputed (rainbow) tables fail
 
 ```python
 from argon2 import PasswordHasher
 ph = PasswordHasher(); hash = ph.hash("correct horse battery staple")
 ```
 
-<!-- The single most common real-world crypto failure. Why slow + salted: slow defeats brute force, salt defeats rainbow tables and makes identical passwords hash differently. Tie to the hook (cracked MD5). ~6 min. -->
+<!-- They saw WHY fast unsalted hashes fall in the Cryptography hash lab; here the point is the library call. argon2-cffi picks the salt and parameters for you. ~3 min. -->
 
 ---
 
-## Worked example: why ECB leaks
+## Old MD5 records: rehash-on-login
 
-- ECB encrypts each block independently → **patterns survive**
-- The classic "ECB penguin": the image is still recognizable encrypted
-- **CBC isn't the fix either** — no integrity check means an attacker can flip bits in the ciphertext and the corresponding plaintext bits flip predictably
-- Fix: an **authenticated** mode (**AES-GCM**) with a random nonce — confidentiality *and* integrity together
-
-```sim
-aes-modes
+```python
+def login(user, pw):
+    record = db[user]
+    if is_legacy_md5(record):
+        if not hmac.compare_digest(md5(pw), record):
+            return False
+        db[user] = ph.hash(pw)   # upgrade now: only at login do we hold pw
+        return True
+    return ph.verify(record, pw)
 ```
 
-<!-- The visual that makes ECB "click" — an ECB-penguin-style panel AND a live CBC-malleability demo (flip a ciphertext bit, watch the plaintext bit flip in a sess=...;admin=0;... token) in one sim. Don't stop at "ECB bad, GCM good" — CBC's lack of integrity is the middle step that makes AEAD's *value* click. This is exactly the ECB oracle they break in the lab. ~6 min. -->
+- You can't re-hash 10,000 MD5 records tonight: you never had the passwords
+- Each user moves to argon2id at their next successful login — no reset email
+
+<!-- This is Task 5 (migrate.py): students write the one marked line. compare_digest avoids a timing side channel on the old check. Users who never log in stay on MD5: say that after a deadline you force a reset for them. ~4 min. -->
 
 ---
 
-## ECB in one picture
-
-![Two identical 16-byte plaintext blocks encrypted with ECB become two identical ciphertext blocks, so the repetition leaks (the ECB-penguin effect); the same input re-encrypts to the same bytes because there is no nonce. AES-GCM with a random nonce and auth tag produces different, random-looking blocks and detects tampering. Choosing AES is not the fix — AES-ECB leaks and AES-GCM under a hardcoded key is still CWE-798.](img/ecb-pattern-leak.svg)
-
-<!-- Leave this up during Capture the Hash. The static companion to the aes-modes sim: identical plaintext -> identical ciphertext (orange, '='), and GCM -> different blocks (blue, '='-crossed). Point at the two equal orange blocks: 'that equality is the leak.' Land on the footer: AES is a primitive, not a decision — mode, nonce, key source and RNG are four separate choices. ~3 min. -->
-
----
-
-## Capture the Hash — how cracking works
+## What the scanner sees
 
 ```bash
-# strip comments, then crack unsalted MD5 with a wordlist
-hashcat -m 0 hashes.txt rockyou.txt
+semgrep scan --config p/python vulnerable_crypto.py
+# -> insecure-hash-algorithm-md5   line 9
+#    "...Use SHA256 or SHA3 instead."
+gitleaks detect --no-git --source vulnerable_crypto.py
+# -> no leaks found
 ```
 
-- Unsalted fast hash → attacker hashes wordlist once, matches millions
-- Salt would force per-guess work; a slow KDF makes it infeasible
+- It matches **API names** — it can't know a `random` value is a reset token
+- A key like `b"0123456789abcdef"` doesn't look like a secret
+- Its advice is for signatures: **SHA-256 is still wrong for passwords**
 
-<!-- Walk the attack: the attacker doesn't "reverse" the hash — they hash guesses and compare. Fast+unsalted = cheap; salted+slow = expensive. This is the lab's round 1. ~5 min. -->
+<!-- Run it live if the network allows; this is the output on the day the lab was written. Registry rules change, so students record whatever their own run shows. Key point: one finding out of four, and its suggested fix is the wrong one for passwords. ~4 min. -->
 
 ---
 
-## Common crypto failures (A04:2025)
+## Review checklist
 
-- **ECB mode** → block patterns leak
-- Hardcoded keys / keys in source (CWE-321, a case of CWE-798)
-- Weak RNG (`random` instead of `secrets`/CSPRNG) (CWE-330)
-- **MD5 / SHA-1** for security; unauthenticated encryption (no integrity)
+- **MD5 / SHA-1** used for passwords or security
+- **`MODE_ECB`** — identical blocks give identical ciphertext (CWE-327)
+- **A key written as a literal** in source (CWE-321, a case of CWE-798)
+- **`random`** used for anything secret (CWE-330)
 
-<!-- The checklist of what to look for / avoid. Each maps to a CWE they'll cite. Note: "no integrity" = attacker can flip ciphertext bits undetected → that's why AEAD (GCM) matters. ~4 min. -->
+<!-- Students use exactly this list in Task 2 to find the four mistakes by reading. ECB: recognise MODE_ECB and point at the repeated block in the ecb: line; the why is the Cryptography cipher-modes lab. ~3 min. -->
+
+---
+
+## Keys belong outside the code
+
+- Load the key at runtime: environment variable or a secrets manager / KMS
+- **Deleting the line in a new commit doesn't end the leak**: it stays in git history (Gitleaks scans history — Week 2)
+- After a leak: rotate the key, then remove it
+
+```bash
+export ENC_KEY_HEX=$(openssl rand -hex 32)   # Task 6
+```
+
+<!-- Task 4 + Task 6. A private repo still gets cloned, forked, backed up and shared with contractors. ~3 min. -->
 
 ---
 
 ## Do this instead
 
-- Authenticated encryption: **AES-GCM** or **ChaCha20-Poly1305**
-- Keys from a secrets manager / KMS — never in code
-- CSPRNG: `secrets` (Python), `crypto.randomBytes` (Node)
-- SHA-256+ for integrity; argon2id/bcrypt for passwords
+- Passwords: **argon2id** via a library, never your own scheme
+- Data: **authenticated encryption (AES-GCM)** — unlike ECB or plain CBC it detects a changed ciphertext
+- Tokens: a CSPRNG — `secrets` (Python), `crypto.randomBytes` (Node)
+- Keys: from the environment / KMS, never in code
 
-<!-- The "right answers" slide — students should leave able to pick the correct primitive. Emphasize: use vetted libraries, don't invent. ~3 min. -->
-
----
-
-## CWE mapping
-
-- **CWE-327** — broken/risky crypto algorithm
-- **CWE-916** — weak password hash (no/weak KDF)
-- **CWE-330** — insufficiently random values
-- **CWE-321** — hardcoded key (a case of CWE-798, which OWASP files under A07)
-
-<!-- Quick reference; they map lab findings to these. ~1 min. -->
+<!-- The "right library call" slide. The Cryptography course shows the attacks behind each line; here students should leave able to pick the call. ~2 min. -->
 
 ---
 
@@ -150,57 +154,47 @@ random.choice("0123456789")   # CWE-330      ->  secrets.token_urlsafe(16)
 ```
 
 - Four separate decisions — **KDF · cipher mode · key source · RNG** — not one "use better crypto"
-- "Use AES" answers none of them: AES-ECB leaks; AES-GCM under a hardcoded key is still CWE-798
-- Each fix makes the value **unguessable / authenticated / unique**, not merely "encrypted"
+- "Use AES" answers none of them: AES-GCM under a hardcoded key is still CWE-798
 
-<!-- The mechanism slide, parallel to Wk4 parameterize / Wk5 encode. Walk the four rows: md5 is fast + unsalted so a GPU cracks it -> argon2id is slow + salted; ECB leaks -> GCM adds nonce (unique) + tag (integrity); a hardcoded key means one leak breaks everything -> load it from the environment/KMS; random is predictable -> secrets is a CSPRNG. Punch line: crypto isn't one switch, it's four decisions, and a strong primitive with a weak decision is still broken. ~5 min. -->
-
----
-
-## Four decisions, four fixes
-
-![Four crypto misuses and their fixes: password storage (md5 to argon2id), cipher mode (hardcoded-key ECB to GCM with a nonce and auth tag), randomness (random.choice to secrets.token_urlsafe), and key source (hardcoded key to an environment variable). One cipher name answers none of these four questions — AES-GCM under a hardcoded key is still CWE-798.](img/crypto-misuse.svg)
-
-<!-- Synthesis slide — the four separate concepts from the last several slides (KDF, cipher mode, RNG, key source) are one decision each in vulnerable_crypto.py, not one big "use better crypto" fix. Land on the closing line: picking AES-GCM doesn't save you if the key is still hardcoded. ~4 min. -->
+<!-- Task 6 (the fixed version). Walk the four rows; land on the closing line. ~3 min. -->
 
 ---
 
-## 🔓 Game — Capture the Hash
+## 🔎 Game — Misuse Hunt
 
-- **Round 1 (speedrun):** crack unsalted/MD5 hashes — fastest team wins
-- **Round 2:** exploit an **ECB oracle** (identical blocks)
-- **Round 3 (defend):** run the fixed version (argon2id + AES-GCM + keys from env) and confirm it holds — **then author two pieces yourself**: migrate a legacy MD5 record to argon2id on next login, and write the decrypt+tamper-check the fixed version doesn't include for you
+- **Round 1 (speedrun):** scan + read — first team to list all four mistakes with line numbers and CWE wins
+- **Round 2:** rehash-on-login — first team whose `migrate.py` prints `ALL PASS`
+- **Round 3 (defend):** run the fixed version with the key from `ENC_KEY_HEX`
 
-<!-- Explain rounds before lab. Round 1 = instant-feedback fun. Round 3 is NOT just "run the pre-fixed code and verify" — be precise that the rehash-on-login migration and the GCM decrypt/tamper-check are the parts students actually write; the rest of the fixed script is handed to them already implemented. Leaderboard on round 1. ~3 min. -->
+<!-- Explain rounds before lab. Leaderboard on round 1; check line numbers, not just names. ~2 min. -->
 
 ---
 
 ## Lab 3 — deliverable
 
-> 📋 **Worksheet 3** — `labs/week03-cryptography/worksheet.md` (Part 3) · **kickoff:** `docker compose up` (runs the crypto scripts)
+> 📋 **Worksheet 3** — `labs/week03-cryptography/worksheet.md` (Part 3) · **kickoff:** `docker compose up`
 
-- Cracked hashes + method · ECB-leak proof · predictable-token note
-- **Before/after** code (misuse → fix → CWE closed) — incl. your rehash-on-login migration + GCM decrypt/tamper-check
-- TLS: read a real cert's issuer/subject/validity + negotiated protocol version
-- Crack **NoteVault's** own MD5 hashes for the term-project report
-- Every screenshot needs your **whoami + student ID + timestamp in-frame** — this lab's raw output is identical for the whole cohort by design, so unstamped evidence isn't gradable
-- **+ Audit the AI / EiPE / Prompt Problem** (see worksheet)
+- Tool findings + your judgement of the tool's advice
+- The four-mistake table (line · mistake · CWE · flagged by a tool?) + the repeated ECB block marked
+- Token sample + estimate · key line + git-history point
+- `migrate.py` → `ALL PASS` · fixed version + before/after table
+- Every screenshot: **whoami + student ID + timestamp in-frame** · **+ Audit the AI / EiPE / Prompt** (see worksheet)
 
-<!-- Graded output — six pieces, not three; don't let the deliverable slide undersell TLS (Task 8) or the evidence stamp (highest-impact single miss if skipped — output is byte-identical across the cohort without it). Point to vulnerable_crypto.py + solution_skeleton.py. -->
+<!-- Graded output. Optional bonus (homework): scan NoteVault and record its crypto findings for the project report. -->
 
 ---
 
 ## Key takeaways
 
-- Encoding ≠ encryption; hashing isn't reversible
-- Use vetted KDFs + authenticated encryption — never roll your own
-- Randomness & key handling matter as much as the algorithm
+- Scanners find some crypto mistakes; code review finds the rest
+- argon2id for passwords — and rehash-on-login to get there from MD5
+- Keys outside the code · `secrets` for tokens
 
-<!-- Recap. Cold-call: "how should we store passwords, and why salted+slow?" ~2 min. -->
+<!-- Recap. Cold-call: "Semgrep said use SHA-256 — why is that wrong here?" ~2 min. -->
 
 ---
 
 # Questions?
 Next week: Injection & input handling
 
-<!-- Cliffhanger: "Next week — type one quote mark and log in as admin." Remind: hashcat + wordlist ready. -->
+<!-- Cliffhanger: "Next week — type one quote mark and log in as admin." -->

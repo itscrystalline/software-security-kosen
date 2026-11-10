@@ -31,7 +31,7 @@ To reach the CTF arena's private-network challenges you'll also need WireGuard â
 |----|-------|-----------|------------|
 | 1  | Security mindset & threat modeling | A06 | "Elevation of Privilege" STRIDE card game |
 | 2  | Secure SDLC, tooling & fuzzing | â€” | "Bug Triage Race" + "Fuzzing Race" |
-| 3  | Cryptography used correctly | A04 | "Capture the Hash" speedrun + ECB oracle |
+| 3  | Cryptography used correctly | A04 | "Misuse Hunt": scanner + code review + rehash-on-login |
 | 4  | Injection & input handling | A05 | "SQLi Warm-up" (DVWA / Juice Shop) |
 | 5  | XSS & client-side risks | A05 | "XSS Golf" (shortest payload wins) |
 | 6  | Authn, sessions & access control | A01, A07 | "IDOR Treasure Hunt + JWT Forgery" |

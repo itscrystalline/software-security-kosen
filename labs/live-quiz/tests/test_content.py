@@ -407,9 +407,9 @@ def test_trivy_blindspot_prints_only_real_dockerfile_lines():
                  "WORKDIR /app", "EXPOSE 5000", 'CMD ["python", "app.py"]'):
         assert line in strings, f"sim no longer prints {line!r}"
         assert line in ins_lines, f"{line!r} is not in Dockerfile.insecure any more"
-    for line in ("COPY requirements.txt .", "COPY app.py .", "USER 65532:65532",
+    for line in ("COPY requirements-hardened.txt .", "COPY app.py .", "USER 65532:65532",
                  "RUN python -m venv /venv \\",
-                 "&& /venv/bin/pip install --no-cache-dir -r requirements.txt"):
+                 "&& /venv/bin/pip install --no-cache-dir --require-hashes -r requirements-hardened.txt"):
         assert any(line in s for s in strings), f"sim no longer prints {line!r}"
         assert line in hard_lines, f"{line!r} is not in Dockerfile.hardened any more"
     # the digest the sim pins is the one Dockerfile.hardened pins
@@ -509,7 +509,37 @@ def test_week15_slides_embed_every_diagram_and_sim():
     assert "](img/" not in out, "an image line fell through as raw markdown"
 
 
-_SESSION6_UNITS = ("week13-cloud-container", "week14-ai-llm-security", "week15-devsecops-pipeline")
+def test_week02_slides_embed_both_diagrams():
+    """The fuzzing diagram's alt text said "reads data[3] with no size>3 guard".
+    The ']' in data[3] ended the alt early, so learn.zcr.ai showed the raw
+    ![...](img/fuzzing-finds-it.svg) line instead of the picture (found by the
+    1 Nov 2026 KOSEN student dry-run)."""
+    doc = C.render_document("week02-sdlc-tooling", "slides", "software-security")
+    assert doc is not None
+    imgs = re.findall(r'<img\b[^>]*src="([^"]+)"', doc["html"])
+    assert [os.path.basename(i) for i in imgs] == ["sdlc-gates.svg", "fuzzing-finds-it.svg"], imgs
+    assert "](img/" not in doc["html"], "an image line fell through as raw markdown"
+
+
+def test_slides_img_copies_match_the_lab_originals():
+    """A deck writes `img/<name>`. The web renderer and the pptx build read that
+    from the week's lab img/, but on GitHub it resolves against slides/, so
+    slides/img/ keeps copies. Each copy must stay byte-identical to the one lab
+    file of the same name, or GitHub readers see an older diagram."""
+    repo = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", ".."))
+    copies = os.path.join(repo, "slides", "img")
+    if not os.path.isdir(copies):
+        pytest.skip("no slides/img/ in this checkout")
+    labs = os.path.join(repo, "labs")
+    for name in sorted(os.listdir(copies)):
+        originals = [os.path.join(labs, d, "img", name) for d in sorted(os.listdir(labs))
+                     if os.path.isfile(os.path.join(labs, d, "img", name))]
+        assert len(originals) == 1, f"slides/img/{name}: expected one labs/*/img/{name}, found {originals}"
+        with open(originals[0], "rb") as a, open(os.path.join(copies, name), "rb") as b:
+            assert a.read() == b.read(), f"slides/img/{name} drifted from {os.path.relpath(originals[0], repo)}"
+
+
+_SESSION6_UNITS =("week13-cloud-container", "week14-ai-llm-security", "week15-devsecops-pipeline")
 
 
 @pytest.mark.parametrize("unit", _SESSION6_UNITS)

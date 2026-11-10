@@ -107,7 +107,7 @@ Weeks 10–15.
   asks for **no** equivalent deliverable. So if the final is run open-note, the only cheat sheet the
   course has ever asked students to produce covers the wrong half of the syllabus. Decide open/closed
   at the Week 17 debrief and, if open-note, add the deliverable to Week 17 first.
-- **Instructor, at the Week 17 debrief** (`AGENDA.md`, Week 7 & 17 review block, 4:30–5:00
+- **Instructor, at the Week 17 debrief** (`AGENDA.md`, Week 7 & 17 review block, 2:20–2:30
   *Debrief: common mistakes + exam logistics*): announce the open/closed-note decision, resolve the
   scope assumption above, and state which form of the paper is being sat.
 - **Instructor, before the day:** confirm the exam version — the proctor deck's own note is to
@@ -228,13 +228,17 @@ marked ⬚ rather than guessed.
    item was mis-set, mis-worded, or the teaching week did not land), and split-with-good-students-
    wrong (the item is probably ambiguous).
 2. **Separate a bad item from a real gap.** This is the last written instrument of the term, so a
-   cohort-wide failure cannot be retaught to this cohort. It is a signal about the emphasised
-   teaching week (10–16) and about Week 17's consolidation — record it against that week, not
-   against the item.
-3. **The one same-term use of the analysis.** If marking finishes before Week 19, a topic the cohort
-   failed cohort-wide is a fair subject for the unscripted questions in the Week 19 graded demos
-   (`instructor/anti-cheating.md` §D provides for 1–2 unscripted questions per team). Optional, and
-   it probes rather than re-teaches.
+   cohort-wide failure cannot be retaught for marks — Week 20 revisits it, but grades nothing. It
+   is a signal about the emphasised teaching week (10–16) and about Week 17's consolidation —
+   record it against that week, not against the item.
+3. **The same-term uses of the analysis.** The items the cohort failed cohort-wide are the agenda
+   for [Week 20](week20-exam-feedback-reflection.md)'s walk-through, corrections and
+   misconceptions blocks (`AGENDA.md`, *Week 20*), so marking must finish before Week 20; whether it
+   can is ⬚. If marking finishes before Week 19, such a topic is also a fair subject for the
+   unscripted questions `instructor/anti-cheating.md` §D provides for (1–2 per team) — but the Week
+   19 demo is now a video graded asynchronously, and only teams the instructor flags are called for
+   a short live Q&A (`AGENDA.md`, *Week 19*), so those questions reach the flagged teams only.
+   Optional, and it probes rather than re-teaches.
 4. **Replace, don't patch.** Items are rotated from the FINAL POOL of
    `instructor/exams/item-bank.md`, which exists for exactly this — the file states its purpose as
    rotating and rebuilding the written exams each cohort because the public exam files leak.
@@ -290,7 +294,7 @@ No worksheet, no weekly quiz and no flag this week — nothing is submitted to C
 | `instructor/` is git-ignored — a colleague marking from a fresh clone of the public repo has **no key at all**, and no Form B | Transfer the key out-of-band before marking day; never "fix" this by committing the key |
 | Printing a Markdown paper: Section B is a set of fenced code blocks in several languages, and later sections cross-reference them. A wrapped or page-broken snippet changes what a "spot the vuln" item actually shows, and a snippet printed on a different page from the item that refers back to it is worse | Export to PDF once, read the printed proof line by line, confirm no snippet wraps or splits across a page, and check that each cross-referenced snippet is visible from the item that cites it, before duplicating |
 | The README's *Scope assumption* is left unresolved, so half the cohort revises Weeks 10–16 only and half revises all nineteen weeks | Announce the scope decision at the Week 17 debrief, in the same slot as the form and materials decisions |
-| No lab block this week, so nothing is checked on a machine — Week 19 is a 240-min team CTF **plus graded demos**, and the first time a team discovers their project will not build is at its start | Use the deck's closing note at collection: state the Week 19 *Bring* list (threat model, vuln report, fixed code, SBOM, signed artifact, CI pipeline) and tell teams to do a dry run before they leave |
+| No lab block this week, so nothing is checked on a machine — Week 19 is a 150-min team CTF that fills the class, the **graded demo video** is due with the report, and the first time a team discovers their project will not build is at its start | Use the deck's closing note at collection: state the Week 19 *Bring* list (threat model, vuln report, fixed code, SBOM, signed artifact, CI pipeline) and tell teams to do a dry run before they leave |
 | A student misses the sitting | Run the other form (§5) — with Form B as the main sitting that is the public Form A, so see §5 for the open decision; eligibility and date are **⬚** (institutional) |
 | Multiple sections / multiple sittings of the same cohort | The later sitting must not sit the same form as the earlier one; record which form each section sat (§5). If the earlier sitting used Form B, the form left is the public Form A — see the first row. Section and seating arrangements are **⬚** |
 

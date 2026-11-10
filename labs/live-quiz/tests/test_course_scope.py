@@ -313,3 +313,28 @@ def test_empty_string_from_a_form_is_treated_as_unset(db):
     not a course literally named empty-string."""
     import course_scope
     assert course_scope.check("" or None) == C.COURSES[0]["slug"]
+
+
+# --- the per-course late rate -------------------------------------------------
+
+def _one_course(tmp_path, monkeypatch, **extra):
+    d = tmp_path / "kosen-sw" / "week01-x"
+    d.mkdir(parents=True)
+    monkeypatch.setenv("COURSES", json.dumps(
+        [dict({"slug": "kosen-sw", "title": "K", "root": str(tmp_path / "kosen-sw")}, **extra)]))
+    return C._load_courses()
+
+
+def test_a_course_takes_no_late_work_unless_it_says_so(tmp_path, monkeypatch):
+    assert _one_course(tmp_path, monkeypatch)[0]["late_pct_per_day"] == 0
+
+
+def test_a_late_rate_is_read_from_the_registry(tmp_path, monkeypatch):
+    assert _one_course(tmp_path, monkeypatch, late_pct_per_day=10)[0]["late_pct_per_day"] == 10
+
+
+@pytest.mark.parametrize("bad", [True, "10", 10.5, -1, 101, None])
+def test_a_bad_late_rate_stops_the_platform_starting(tmp_path, monkeypatch, bad):
+    # A typo here would silently change every student's mark, so it fails loudly instead.
+    with pytest.raises(ValueError, match="late_pct_per_day"):
+        _one_course(tmp_path, monkeypatch, late_pct_per_day=bad)

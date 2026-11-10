@@ -236,8 +236,9 @@ W1–6). Absence / make-up / late policy for an exam sitting: ⬚ (institutional
 ## 7. After the sitting — debrief and how results feed the final mark
 
 - **Debrief.** `AGENDA.md` allocates no debrief inside the 150 minutes. The only adjacent slot the
-  timetable offers is the Week 10 lecture's opening block, `0:00–0:10 weekly quiz + recap`
-  (`AGENDA.md`, standard teaching-week template); date ⬚. The deck's own close is: collect
+  timetable offers is the Week 10 class's opening block, `0:00–0:10` *weekly quiz + today's goal*
+  (`AGENDA.md`, standard teaching-week template), which the quiz fills; date ⬚. Week 20's
+  feedback week walks through the *final* assessments only (`AGENDA.md`, *Week 20*), not this one. The deck's own close is: collect
   submissions, grade with the answer key + `ctf_integrity_report.py` for copied flags, preview Week 10
   (APIs) (`slides/week09.md`).
 - **Marking.** Key: `instructor/exams/week09-midterm-practical-ctf-answers.md` (git-ignored — never

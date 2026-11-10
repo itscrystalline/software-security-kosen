@@ -205,7 +205,7 @@ nc -lvp 34567 -e /bin/bash   # attacker gets a shell
 
 Local API, `docker compose up` → :8080 (vulnerable) / :8081 (fixed):
 
-1. **BOLA:** `401 → 403 → 200` — probe, get denied, then read another user's orders as yourself
+1. **BOLA:** `401 → 403 → 200` — probe with no token, get denied reading *another* user's orders, then read *your own* orders successfully
 2. **Mass assignment:** smuggle `is_admin`/`balance` into account creation
 3. **Resource consumption:** `401×5 → 429×2` on `/api/login`
 4. **Defend:** switch to the pre-written `solution_api.py`, cite the exact fix line for each

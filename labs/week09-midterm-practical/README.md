@@ -14,7 +14,7 @@ A timed capture-the-flag with graded challenges across:
 - **Injection** (SQLi / command injection) — this course's own apps, not DVWA.
 - **XSS** (stored only) — this course's own week05 app, not Juice Shop.
 - **Auth / access control** (IDOR, weak JWT forgery).
-- **Cryptography** (crack a weak hash / break an ECB oracle).
+- **Cryptography** (crack a weak hash — the technique from the Cryptography course's hash lab; practise on `labs/week03-cryptography/hashes.txt` — and recover structure from an ECB oracle, as in Week 3).
 
 Each solved challenge yields a flag; partial credit for documented progress.
 

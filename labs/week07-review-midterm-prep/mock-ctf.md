@@ -18,7 +18,7 @@
 | 3 | Pop `alert(1)` that another user would trigger | stored XSS (W5) | the comment body is rendered raw | `fixed_app.py` (CSP) |
 | 4 | Read an order that isn't yours | IDOR (W6) | change the id; no ownership check | `attack.md` |
 | 5 | Become admin with a crafted token | weak JWT (W6) | `alg:none` / weak secret `"secret"` | `attack.md` |
-| 6 | Recover a password from its hash | crypto (W3) | unsalted MD5 + a wordlist | `solution_skeleton.py` |
+| 6 | Recover a password from its hash | crypto (Cryptography course hash lab) | unsalted MD5 + a wordlist; practise on Week 3's `hashes.txt` | `solution_skeleton.py` |
 
 **For each:** note your payload/command + a one-line fix. Compare with the linked solution.
 
