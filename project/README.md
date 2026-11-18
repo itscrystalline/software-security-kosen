@@ -24,7 +24,7 @@ Take a small web/API application (provided starter, or your own with instructor 
 | Vulnerability report (draft) | Week 11 |
 | Remediation + SBOM + signed artifact | Week 14 |
 | Capstone studio — WIP demo & peer review | Week 16 |
-| Final report + demo video link (graded) | Before Week 19 (the portal shows the exact deadline) |
+| Final report + demo video link (graded) | **Sunday 28 February 2027, 23:59** on learn.zcr.ai/submit |
 
 ## Rubric (100 pts)
 
@@ -37,7 +37,7 @@ Take a small web/API application (provided starter, or your own with instructor 
 | CI pipeline (works, fails build appropriately) | 10 |
 | Presentation & report clarity | 5 |
 
-**Due:** before Week 19 (exact time on learn.zcr.ai/submit). **Late:** −10% per started day; 0 after 10 days.
+**Due:** Sunday 28 February 2027, 23:59 (Thai time), on learn.zcr.ai/submit: one report PDF per team, with the code commit link and the unlisted video link inside. **Late:** −10% per started day; 0 after 10 days.
 
 ## Peer-contribution evaluation (individual fairness)
 
